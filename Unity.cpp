@@ -15,7 +15,7 @@
 #include "Core/Core/PropertyQSize.cpp"
 #include "Core/Core/PropertyQPoint.cpp"
 #include "Core/GUI/PropertyQColor.cpp"
-#include "Core/GUI/PropertyQFont.cpp
+#include "Core/GUI/PropertyQFont.cpp"
 #include "PropertyWidget/PropertyWidget.cpp"
 #include "PropertyWidget/PropertyView.cpp"
 #include "PropertyWidget/Utils/InplaceEditing.cpp"
