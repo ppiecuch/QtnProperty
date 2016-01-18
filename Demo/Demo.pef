@@ -186,6 +186,7 @@ property_set SamplePS
         {
             qDebug() << Q_FUNC_INFO << "Poperty has changed: " << this;
         }
+        delegate { editor = QtnColorDelegateEditorNone; }
     }
 
     QFont QFontProperty

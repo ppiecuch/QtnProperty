@@ -514,6 +514,11 @@ void QtnPropertySetSamplePS::on_BoolButtonProperty_propertyDidChange(const QtnPr
 
 void QtnPropertySetSamplePS::connectDelegates()
 {
+    QColorProperty.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
+        QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
+        info->attributes["editor"] = QtnColorDelegateEditorNone;
+        return info.take();
+    });
     BoolButtonProperty.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
         QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
         info->name = "Button";

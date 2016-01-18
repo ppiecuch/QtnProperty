@@ -15,6 +15,7 @@
 */
 
 #include "PropertyDelegateQColor.h"
+#include "../../../Core/Core/PropertyUInt.h"
 #include "../../../Core/GUI/PropertyQColor.h"
 #include "../PropertyDelegateFactory.h"
 #include "../PropertyEditorHandler.h"
@@ -32,7 +33,7 @@ public:
 
         if (!property.isEditableByUser())
         {
-//            editor.lineEdit->setReadOnly(true);
+			// editor.lineEdit->setReadOnly(true);
             editor.toolButton->setEnabled(false);
         }
 
@@ -69,14 +70,61 @@ bool regQColorDelegate() {
 }
 
 QtnPropertyDelegateQColor::QtnPropertyDelegateQColor(QtnPropertyQColorBase& owner)
-    : QtnPropertyDelegateTyped<QtnPropertyQColorBase>(owner),
-      m_shape(QtnColorDelegateShapeSquare)
+    : QtnPropertyDelegateTypedEx<QtnPropertyQColorBase>(owner),
+      m_shape(QtnColorDelegateShapeSquare),
+      m_editor(QtnColorDelegateEditorDialog)
 {
+	// Red
+    QtnPropertyUIntCallback* propertyRed = new QtnPropertyUIntCallback(0);
+    addSubProperty(propertyRed);
+    propertyRed->setName(owner.tr("Red"));
+    propertyRed->setDescription(owner.tr("Red fraction of %1.").arg(owner.name()));
+    propertyRed->setCallbackValueGet([&owner]()->quint32 {
+        return owner.value().red();
+    });
+    propertyRed->setCallbackValueSet([&owner](quint32 value) {
+        QColor color = owner.value();
+        color.setRed((int)value);
+        owner.setValue(color);
+    });
+    propertyRed->setMinValue(0);
+    propertyRed->setMaxValue(255);
+	// Green
+    QtnPropertyUIntCallback* propertyGreen = new QtnPropertyUIntCallback(0);
+    addSubProperty(propertyGreen);
+    propertyGreen->setName(owner.tr("Green"));
+    propertyGreen->setDescription(owner.tr("Green fraction of %1.").arg(owner.name()));
+    propertyGreen->setCallbackValueGet([&owner]()->quint32 {
+        return owner.value().green();
+    });
+    propertyGreen->setCallbackValueSet([&owner](quint32 value) {
+        QColor color = owner.value();
+        color.setGreen((int)value);
+        owner.setValue(color);
+    });
+    propertyGreen->setMinValue(0);
+    propertyGreen->setMaxValue(255);
+	// Blue
+    QtnPropertyUIntCallback* propertyBlue = new QtnPropertyUIntCallback(0);
+    addSubProperty(propertyBlue);
+    propertyBlue->setName(owner.tr("Blue"));
+    propertyBlue->setDescription(owner.tr("Blue fraction of %1.").arg(owner.name()));
+    propertyBlue->setCallbackValueGet([&owner]()->quint32 {
+        return owner.value().red();
+    });
+    propertyBlue->setCallbackValueSet([&owner](quint32 value) {
+        QColor color = owner.value();
+        color.setBlue((int)value);
+        owner.setValue(color);
+    });
+    propertyBlue->setMinValue(0);
+    propertyBlue->setMaxValue(255);
 }
 
 void QtnPropertyDelegateQColor::applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes)
 {
     qtnGetAttribute(attributes, "shape", m_shape);
+    qtnGetAttribute(attributes, "editor", m_editor);
 }
 
 void QtnPropertyDelegateQColor::drawValueImpl(QStylePainter& painter, const QRect& rect, const QStyle::State& state, bool* needTooltip) const
@@ -115,7 +163,7 @@ void QtnPropertyDelegateQColor::drawValueImpl(QStylePainter& painter, const QRec
 
     if (textRect.isValid())
     {
-        QtnPropertyDelegateTyped<QtnPropertyQColorBase>::drawValueImpl(painter, textRect, state, needTooltip);
+        QtnPropertyDelegateTypedEx<QtnPropertyQColorBase>::drawValueImpl(painter, textRect, state, needTooltip);
     }
 }
 

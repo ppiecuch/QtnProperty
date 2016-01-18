@@ -510,7 +510,7 @@ void QtnPropertySetTest3::init()
                 return false;
             }
         });
-    bc.setCallbackValueEqual([](bool)->bool { return false; });
+    bc.setCallbackValueEqual([](bool value)->bool { return false; });
     bc.setCallbackValueGet([this]()->bool {
                 return ww;
         });

@@ -37,8 +37,8 @@ public:
 
         if (!property.isEditableByUser())
         {
-	  // editor.lineEdit->setReadOnly(true);
-	  editor.toolButton->setEnabled(false);
+	  		// editor.lineEdit->setReadOnly(true);
+	  		editor.toolButton->setEnabled(false);
         }
 
         updateEditor();

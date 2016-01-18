@@ -21,7 +21,7 @@
 
 class QtnPropertyQColorBase;
 
-class QTN_PW_EXPORT QtnPropertyDelegateQColor: public QtnPropertyDelegateTyped<QtnPropertyQColorBase>
+class QTN_PW_EXPORT QtnPropertyDelegateQColor: public QtnPropertyDelegateTypedEx<QtnPropertyQColorBase>
 {
     Q_DISABLE_COPY(QtnPropertyDelegateQColor)
 
@@ -36,6 +36,7 @@ protected:
 
 private:
     quint32 m_shape;
+    quint32 m_editor;
 };
 
 #endif // PROPERTY_DELEGATE_QCOLOR_H

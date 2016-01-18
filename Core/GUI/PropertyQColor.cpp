@@ -16,6 +16,12 @@
 
 #include "PropertyQColor.h"
 
+QtnPropertyQColorBase::QtnPropertyQColorBase(QObject *parent)
+    : QtnSinglePropertyBase<QColor>(parent)
+{
+    addState(QtnPropertyStateCollapsed);
+}
+
 bool QtnPropertyQColorBase::fromStrImpl(const QString& str)
 {
     QColor color(str.trimmed());

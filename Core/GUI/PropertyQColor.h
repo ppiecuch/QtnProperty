@@ -20,6 +20,12 @@
 #include "../Auxiliary/PropertyTemplates.h"
 #include <QtGui/QColor>
 
+enum QtnColorDelegateEditor
+{
+    QtnColorDelegateEditorNone = 0x1,
+    QtnColorDelegateEditorDialog = 0x2
+};
+
 enum QtnColorDelegateShape
 {
     QtnColorDelegateShapeNone = 0x1,
@@ -33,10 +39,7 @@ class QTN_PE_CORE_EXPORT QtnPropertyQColorBase: public QtnSinglePropertyBase<QCo
     QtnPropertyQColorBase(const QtnPropertyQColorBase& other) Q_DECL_EQ_DELETE;
 
 public:
-    explicit QtnPropertyQColorBase(QObject *parent)
-        : QtnSinglePropertyBase<QColor>(parent)
-    {
-    }
+    explicit QtnPropertyQColorBase(QObject *parent);
 
 protected:
     // string conversion implementation
