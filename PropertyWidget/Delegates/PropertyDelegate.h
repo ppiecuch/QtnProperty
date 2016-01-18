@@ -26,6 +26,12 @@
 class QKeyEvent;
 class QtnPropertyDelegateFactory;
 
+enum QtnPropertyDelegateProps
+{
+	QtnPropertyDelegateProps_OmitName,
+	QtnPropertyDelegateProps_OmitHightlight,
+};
+
 class QTN_PW_EXPORT QtnInplaceInfo
 {
 public:
@@ -58,6 +64,7 @@ public:
 
     void drawValue(QStylePainter& painter, const QRect& rect, const QStyle::State& state, bool* needTooltip = nullptr) const;
     QString toolTip() const;
+    virtual bool props(const QtnPropertyDelegateProps &prop) const;
     bool acceptKeyPressedForInplaceEdit(QKeyEvent* keyEvent) const;
     QWidget* createValueEditor(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo = nullptr);
 
@@ -71,6 +78,7 @@ protected:
     virtual void applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes) { Q_UNUSED(attributes); }
     virtual void drawValueImpl(QStylePainter& painter, const QRect& rect, const QStyle::State& state, bool* needTooltip = nullptr) const;
     virtual QString toolTipImpl() const;
+    virtual bool propsImpl(const QtnPropertyDelegateProps &prop) const;
     virtual bool acceptKeyPressedForInplaceEditImpl(QKeyEvent* keyEvent) const;
     virtual QWidget* createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo = nullptr) = 0;
 

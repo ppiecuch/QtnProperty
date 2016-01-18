@@ -106,7 +106,7 @@ protected:
     // draws name region of the property set
     virtual void drawPropertySetNameImpl(QStylePainter &painter, const QRect &rect, const QtnPropertyBase* property) const;
     // draws background of the property
-    virtual void drawPropertyBackgroundImpl(QStylePainter &painter, const QRect &rect, const QtnPropertyBase* property) const;
+    virtual void drawPropertyBackgroundImpl(QStylePainter &painter, const QRect &rect, const QtnPropertyBase* property, const bool skipDiv = false, const bool skipHightlight = false) const;
     // draws name region of the property
     virtual void drawPropertyNameImpl(QStylePainter& painter, const QRect& rect, const QtnPropertyBase* property) const;
     // draws value region of the property set

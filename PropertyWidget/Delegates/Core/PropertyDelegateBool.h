@@ -67,6 +67,14 @@ protected:
     void drawValueImpl(QStylePainter& painter, const QRect& rect, const QStyle::State& state, bool* needTooltip = nullptr) const override;
     QWidget* createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo = nullptr) override;
 
+    virtual bool propsImpl(const QtnPropertyDelegateProps &prop) const {
+    	if (prop == QtnPropertyDelegateProps_OmitName
+    		|| prop == QtnPropertyDelegateProps_OmitHightlight)
+	    	return true; // donot draw property name and hightlight for buttons
+	    else
+	    	return false;
+    }
+
 private:
 	QString m_title;
 	QWidget *m_widget;

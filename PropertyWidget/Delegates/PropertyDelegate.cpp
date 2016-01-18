@@ -64,6 +64,11 @@ QString QtnPropertyDelegate::toolTip() const
     return toolTipImpl();
 }
 
+bool QtnPropertyDelegate::props(const QtnPropertyDelegateProps &prop) const
+{
+    return propsImpl(prop);
+}
+
 bool QtnPropertyDelegate::acceptKeyPressedForInplaceEdit(QKeyEvent* keyEvent) const
 {
     return acceptKeyPressedForInplaceEditImpl(keyEvent);
@@ -93,6 +98,11 @@ QString QtnPropertyDelegate::toolTipImpl() const
     QString strValue;
     propertyValueToStr(strValue);
     return strValue;
+}
+
+bool QtnPropertyDelegate::propsImpl(const QtnPropertyDelegateProps &prop) const
+{
+    return false;
 }
 
 bool QtnPropertyDelegate::acceptKeyPressedForInplaceEditImpl(QKeyEvent* keyEvent) const

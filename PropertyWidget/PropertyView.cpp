@@ -327,8 +327,11 @@ void QtnPropertyView::drawPropertySetNameImpl(QStylePainter &painter, const QRec
 
 void QtnPropertyView::drawPropertyItem(QStylePainter& painter, const QRect& rect, const VisibleItem& vItem) const
 {
+	bool valueOnly = vItem.item->delegate->props(QtnPropertyDelegateProps_OmitName);
+	bool noHightlight = vItem.item->delegate->props(QtnPropertyDelegateProps_OmitHightlight);
+
     // draw property background
-    drawPropertyBackgroundImpl(painter, rect, vItem.item->property);
+    drawPropertyBackgroundImpl(painter, rect, vItem.item->property, valueOnly, noHightlight);
 
     int splitPos = splitPosition();
 
@@ -336,23 +339,26 @@ void QtnPropertyView::drawPropertyItem(QStylePainter& painter, const QRect& rect
     QRect valueRect = rect;
     QRect editRect = rect;
 
-    nameRect.setRight(splitPos);
-    valueRect.setLeft(splitPos + m_leadMargin + 1);
-    editRect.setLeft(splitPos + 1);
+	if (!valueOnly)
+	{
+	    nameRect.setRight(splitPos);
+	    valueRect.setLeft(splitPos + m_leadMargin + 1);
+	    editRect.setLeft(splitPos + 1);
 
-    // skip levels space
-    nameRect.setLeft(nameRect.left() + m_leadMargin + nameRect.height() * vItem.level);
-    if (!nameRect.isValid())
-        return;
-
-    // draw branch node
-    drawBranchNode(painter, nameRect, vItem);
-    if (!nameRect.isValid())
-        return;
-
-    // draw property name
-    drawPropertyNameImpl(painter, nameRect, vItem.item->property);
-
+	    // skip levels space
+	    nameRect.setLeft(nameRect.left() + m_leadMargin + nameRect.height() * vItem.level);
+	    if (!nameRect.isValid())
+	        return;
+	
+	    // draw branch node
+	    drawBranchNode(painter, nameRect, vItem);
+	    if (!nameRect.isValid())
+	        return;
+	
+	    // draw property name
+	    drawPropertyNameImpl(painter, nameRect, vItem.item->property);
+	}
+	
     // draw property value
     if (!valueRect.isValid())
         return;
@@ -404,10 +410,10 @@ void QtnPropertyView::drawPropertyItem(QStylePainter& painter, const QRect& rect
     }
 }
 
-void QtnPropertyView::drawPropertyBackgroundImpl(QStylePainter &painter, const QRect &rect, const QtnPropertyBase* property) const
+void QtnPropertyView::drawPropertyBackgroundImpl(QStylePainter &painter, const QRect &rect, const QtnPropertyBase* property, const bool skipDiv, const bool skipHightlight) const
 {
     // highlight background if active
-    if (m_activeProperty == property)
+    if (m_activeProperty == property && !skipHightlight)
         painter.fillRect(rect, palette().color(QPalette::Highlight));
 
     int splitPos = splitPosition();
@@ -419,7 +425,8 @@ void QtnPropertyView::drawPropertyBackgroundImpl(QStylePainter &painter, const Q
 
     // draw rows borders
     painter.drawLine(rect.bottomLeft(), rect.bottomRight());
-    painter.drawLine(splitPos, rect.top(), splitPos, rect.bottom());
+    if (!skipDiv)
+	    painter.drawLine(splitPos, rect.top(), splitPos, rect.bottom());
 }
 
 void QtnPropertyView::drawPropertyNameImpl(QStylePainter& painter, const QRect& rect, const QtnPropertyBase* property) const
