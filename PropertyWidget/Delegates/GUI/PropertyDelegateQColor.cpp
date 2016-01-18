@@ -110,7 +110,7 @@ QtnPropertyDelegateQColor::QtnPropertyDelegateQColor(QtnPropertyQColorBase& owne
     propertyBlue->setName(owner.tr("Blue"));
     propertyBlue->setDescription(owner.tr("Blue fraction of %1.").arg(owner.name()));
     propertyBlue->setCallbackValueGet([&owner]()->quint32 {
-        return owner.value().red();
+        return owner.value().blue();
     });
     propertyBlue->setCallbackValueSet([&owner](quint32 value) {
         QColor color = owner.value();
