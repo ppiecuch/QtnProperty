@@ -97,6 +97,7 @@ public:
     QtnPropertyQRect& QRectProperty;
     QtnPropertyQColor& QColorProperty;
     QtnPropertyQFont& QFontProperty;
+    QtnPropertyBool& BoolButtonProperty;
     QtnPropertySetSubPropertySetType& SubPropertySet2;
     // end children declarations
 
@@ -116,6 +117,7 @@ private:
     // start slot declarations
     void on_EnableSubPropertySet_propertyDidChange(const QtnPropertyBase* changedProperty, const QtnPropertyBase* firedProperty, QtnPropertyChangeReason reason);
     void on_QColorProperty_propertyDidChange(const QtnPropertyBase* changedProperty, const QtnPropertyBase* firedProperty, QtnPropertyChangeReason reason);
+    void on_BoolButtonProperty_propertyDidChange(const QtnPropertyBase* changedProperty, const QtnPropertyBase* firedProperty, QtnPropertyChangeReason reason);
     // end slot declarations
 };
 

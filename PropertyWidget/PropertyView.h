@@ -160,7 +160,7 @@ private:
 
 private:
     void updateItemsTree();
-    static Item* createItemsTree(QtnPropertyBase* rootProperty, const QtnPropertyDelegateFactory& factory);
+    Item* createItemsTree(QtnPropertyBase* rootProperty, const QtnPropertyDelegateFactory& factory);
 
     void invalidateVisibleItems();
     void validateVisibleItems() const;

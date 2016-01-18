@@ -140,6 +140,12 @@ protected:
     {
     }
 
+    explicit QtnSinglePropertyValue(QObject *parent, const QVariant &defaultValue)
+        : QtnSinglePropertyType(parent),
+          m_value(ValueTypeStore(defaultValue))
+    {
+    }
+
     ValueType valueImpl() const override { return m_value; }
     void setValueImpl(ValueType newValue) override { m_value = newValue; }
 

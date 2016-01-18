@@ -231,6 +231,7 @@ QtnPropertySetSamplePS::QtnPropertySetSamplePS(QObject* parent)
     , QRectProperty(*new QtnPropertyQRect(this))
     , QColorProperty(*new QtnPropertyQColor(this))
     , QFontProperty(*new QtnPropertyQFont(this))
+    , BoolButtonProperty(*new QtnPropertyBool(this))
     , SubPropertySet2(*new QtnPropertySetSubPropertySetType(this))
 {
     init();
@@ -262,6 +263,7 @@ QtnPropertySetSamplePS& QtnPropertySetSamplePS::operator=(const QtnPropertySetSa
     QRectProperty = other.QRectProperty;
     QColorProperty = other.QColorProperty;
     QFontProperty = other.QFontProperty;
+    BoolButtonProperty = other.BoolButtonProperty;
     SubPropertySet2 = other.SubPropertySet2;
 
     return *this;
@@ -357,6 +359,11 @@ bool QtnPropertySetSamplePS::copyValuesImpl(QtnPropertySet* propertySetCopyFrom,
     if (!(theCopyFrom->QFontProperty.state() & ignoreMask))
     {
         QFontProperty = theCopyFrom->QFontProperty;
+    }
+
+    if (!(theCopyFrom->BoolButtonProperty.state() & ignoreMask))
+    {
+        BoolButtonProperty = theCopyFrom->BoolButtonProperty;
     }
 
     SubPropertySet2.copyValues(&theCopyFrom->SubPropertySet2, ignoreMask);
@@ -456,6 +463,11 @@ void QtnPropertySetSamplePS::init()
     static QString QFontProperty_description = "Property to hold QFont value.";
     QFontProperty.setDescription(QFontProperty_description);
     QFontProperty.setValue(QFont("Sans Serif", 14));
+    static QString BoolButtonProperty_name = tr("BoolButtonProperty");
+    BoolButtonProperty.setName(BoolButtonProperty_name);
+    static QString BoolButtonProperty_description = "Property with button delegate.";
+    BoolButtonProperty.setDescription(BoolButtonProperty_description);
+    BoolButtonProperty.setValue(false);
     static QString SubPropertySet2_name = tr("SubPropertySet2");
     SubPropertySet2.setName(SubPropertySet2_name);
     SubPropertySet2.setState(QtnPropertyStateCollapsed);
@@ -466,12 +478,14 @@ void QtnPropertySetSamplePS::connectSlots()
 {
     QObject::connect(&EnableSubPropertySet, &QtnProperty::propertyDidChange, this, &QtnPropertySetSamplePS::on_EnableSubPropertySet_propertyDidChange);
     QObject::connect(&QColorProperty, &QtnProperty::propertyDidChange, this, &QtnPropertySetSamplePS::on_QColorProperty_propertyDidChange);
+    QObject::connect(&BoolButtonProperty, &QtnProperty::propertyDidChange, this, &QtnPropertySetSamplePS::on_BoolButtonProperty_propertyDidChange);
 }
 
 void QtnPropertySetSamplePS::disconnectSlots()
 {
     QObject::disconnect(&EnableSubPropertySet, &QtnProperty::propertyDidChange, this, &QtnPropertySetSamplePS::on_EnableSubPropertySet_propertyDidChange);
     QObject::disconnect(&QColorProperty, &QtnProperty::propertyDidChange, this, &QtnPropertySetSamplePS::on_QColorProperty_propertyDidChange);
+    QObject::disconnect(&BoolButtonProperty, &QtnProperty::propertyDidChange, this, &QtnPropertySetSamplePS::on_BoolButtonProperty_propertyDidChange);
 }
 
 void QtnPropertySetSamplePS::on_EnableSubPropertySet_propertyDidChange(const QtnPropertyBase* changedProperty, const QtnPropertyBase* firedProperty, QtnPropertyChangeReason reason)
@@ -490,6 +504,20 @@ void QtnPropertySetSamplePS::on_QColorProperty_propertyDidChange(const QtnProper
         
 }
 
+void QtnPropertySetSamplePS::on_BoolButtonProperty_propertyDidChange(const QtnPropertyBase* changedProperty, const QtnPropertyBase* firedProperty, QtnPropertyChangeReason reason)
+{
+    Q_UNUSED(changedProperty); Q_UNUSED(firedProperty); Q_UNUSED(reason);
+    
+            qDebug() << Q_FUNC_INFO << "Poperty has changed: " << this;
+        
+}
+
 void QtnPropertySetSamplePS::connectDelegates()
 {
+    BoolButtonProperty.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
+        QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
+        info->name = "Button";
+        info->attributes["title"] = "Button title";
+        return info.take();
+    });
 }

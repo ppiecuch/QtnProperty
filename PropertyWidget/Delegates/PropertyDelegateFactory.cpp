@@ -108,6 +108,7 @@ QtnPropertyDelegateFactory& QtnPropertyDelegateFactory::staticInstance()
 
 bool regBoolDelegate();
 bool regBoolDelegateCombobox();
+bool regBoolDelegateButton();
 bool regDoubleDelegate();
 bool regFloatDelegate();
 bool regEnumDelegate();
@@ -124,7 +125,7 @@ bool regQColorDelegate();
 bool regQFontDelegate();
 
 static bool __ID(success) = 
-  regBoolDelegate() && regBoolDelegateCombobox()
+  regBoolDelegate() && regBoolDelegateCombobox() && regBoolDelegateButton()
   && regDoubleDelegate() && regFloatDelegate()
   && regEnumDelegate()
   && regEnumFlagsDelegate()

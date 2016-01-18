@@ -24,7 +24,29 @@
 #include <QStyleOption>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QLabel>
+#include <QMouseEvent>
 #include <QLineEdit>
+#include <QApplication>
+
+class QtnPainterState
+{
+public:
+    QtnPainterState(QPainter& p)
+        : m_p(p)
+    {
+        m_p.save();
+    }
+
+    ~QtnPainterState()
+    {
+        m_p.restore();
+    }
+
+private:
+    QPainter& m_p;
+};
+
 
 class QtnPropertyBoolCheckBoxHandler: public QtnPropertyEditorHandler<QtnPropertyBoolBase, QCheckBox>
 {
@@ -207,4 +229,67 @@ bool QtnPropertyDelegateBoolCombobox::propertyValueToStr(QString& strValue) cons
 {
     strValue = m_labels[owner().value()];
     return true;
+}
+
+
+static QPalette::ColorGroup colorGroup(QWidget *widget)
+{
+    if (!widget->isEnabled())
+        return QPalette::Disabled;
+    else if (!widget->hasFocus())
+        return QPalette::Inactive;
+    else
+        return QPalette::Active;
+}
+   
+void QtnPropertyDelegateBoolButton::drawValueImpl(QStylePainter& painter, const QRect& rect, const QStyle::State& state, bool* needTooltip) const
+{
+    Q_UNUSED(needTooltip);
+
+    QString text = m_title;
+    if (text.isEmpty())
+        return;
+
+    QColor linkColor = m_widget->palette().color(colorGroup(m_widget), QPalette::Link);
+
+    if ((state&QStyle::State_Enabled) == 0)
+		linkColor = linkColor.darker();
+    else if ((state&QStyle::State_Selected) || (state&QStyle::State_HasFocus))
+		;
+	else
+		linkColor = linkColor.lighter();
+
+    QtnPainterState pState(painter);
+
+    painter.setPen(linkColor);
+	QFont f = painter.font();
+	f.setUnderline(true);
+	painter.setFont(f);
+    painter.drawText(rect, Qt::AlignHCenter | Qt::AlignVCenter
+                     , qtnElidedText(painter, text, rect, needTooltip));
+}
+
+void QtnPropertyDelegateBoolButton::applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes)
+{
+    qtnGetAttribute(attributes, "title", m_title);
+    if (m_title.isEmpty())
+    	qtnGetAttribute(attributes, "_prop_name", m_title);
+    QVariant w;
+    if (qtnGetAttribute(attributes, "_prop_widget", w))
+    	m_widget = qVPtr<QWidget>::asPtr(w);
+}
+
+QWidget* QtnPropertyDelegateBoolButton::createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo)
+{
+	owner().setValue(!owner().value());
+    return 0;
+}
+
+
+bool regBoolDelegateButton() {
+  QtnPropertyDelegateFactory::staticInstance()
+    .registerDelegate(&QtnPropertyBoolBase::staticMetaObject
+			     , &qtnCreateDelegate<QtnPropertyDelegateBoolButton, QtnPropertyBoolBase>
+			     , "Button");
+  return true;
 }

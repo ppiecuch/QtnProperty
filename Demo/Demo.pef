@@ -194,6 +194,20 @@ property_set SamplePS
         value = QFont("Sans Serif", 14);
     }
 
+    Bool BoolButtonProperty
+    {
+        description = "Property with button delegate.";
+        value = false;
+        delegate Button
+        {
+        	title = "Button title";
+        }
+        slot propertyDidChange
+        {
+            qDebug() << Q_FUNC_INFO << "Poperty has changed: " << this;
+        }
+    }
+
     extern property_set SubPropertySetType SubPropertySet2
     {
         state = QtnPropertyStateCollapsed;

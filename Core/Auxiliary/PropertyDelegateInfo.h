@@ -21,6 +21,14 @@
 #include <QMap>
 #include <QVariant>
 
+template <class T> class qVPtr
+{
+public:
+    static T* asPtr(QVariant v) { return  (T *) v.value<void *>(); }
+    static QVariant asQVariant(T* ptr) { return qVariantFromValue((void *) ptr); }
+};
+
+
 typedef QMap<QByteArray, QVariant> QtnPropertyDelegateAttributes;
 
 struct QTN_PE_CORE_EXPORT QtnPropertyDelegateInfo

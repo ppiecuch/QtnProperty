@@ -886,7 +886,10 @@ QtnPropertyView::Item* QtnPropertyView::createItemsTree(QtnPropertyBase* rootPro
             const QtnPropertyDelegateInfo* delegateInfo = asProperty->delegate();
             if (delegateInfo)
             {
-                item->delegate->applyAttributes(delegateInfo->attributes);
+            	QtnPropertyDelegateAttributes attr = delegateInfo->attributes;
+            	attr["_prop_name"] = asProperty->name(); // add property name
+            	attr["_prop_widget"] = qVPtr<QWidget>::asQVariant(this);
+                item->delegate->applyAttributes(attr);
             }
 
             // process delegate subproperties

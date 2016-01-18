@@ -52,4 +52,24 @@ private:
     QString m_labels[2];
 };
 
+class QTN_PW_EXPORT QtnPropertyDelegateBoolButton: public QtnPropertyDelegateTyped<QtnPropertyBoolBase>
+{
+    Q_DISABLE_COPY(QtnPropertyDelegateBoolButton)
+
+public:
+    QtnPropertyDelegateBoolButton(QtnPropertyBoolBase& owner)
+        : QtnPropertyDelegateTyped<QtnPropertyBoolBase>(owner)
+    {
+    }
+
+protected:
+    void applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes) override;
+    void drawValueImpl(QStylePainter& painter, const QRect& rect, const QStyle::State& state, bool* needTooltip = nullptr) const override;
+    QWidget* createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo = nullptr) override;
+
+private:
+	QString m_title;
+	QWidget *m_widget;
+};
+
 #endif // PROPERTY_DELEGATE_BOOL_H
