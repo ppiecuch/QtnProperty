@@ -169,6 +169,9 @@ void QtnPropertyDelegateQColor::drawValueImpl(QStylePainter& painter, const QRec
 
 QWidget* QtnPropertyDelegateQColor::createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo)
 {
+	if (m_editor == QtnColorDelegateEditorNone)
+		return 0;
+
     QtnLineEditBttn* editor = new QtnLineEditBttn(parent);
     editor->setGeometry(rect);
 
