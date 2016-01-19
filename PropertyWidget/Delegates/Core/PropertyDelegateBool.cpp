@@ -29,16 +29,16 @@
 #include <QLineEdit>
 #include <QApplication>
 
-class QtnPainterState
+class QtnBoolPainterState
 {
 public:
-    QtnPainterState(QPainter& p)
+    QtnBoolPainterState(QPainter& p)
         : m_p(p)
     {
         m_p.save();
     }
 
-    ~QtnPainterState()
+    ~QtnBoolPainterState()
     {
         m_p.restore();
     }
@@ -259,7 +259,7 @@ void QtnPropertyDelegateBoolButton::drawValueImpl(QStylePainter& painter, const 
 	else
 		linkColor = linkColor.lighter();
 
-    QtnPainterState pState(painter);
+    QtnBoolPainterState pState(painter);
 
     painter.setPen(linkColor);
 	QFont f = painter.font();

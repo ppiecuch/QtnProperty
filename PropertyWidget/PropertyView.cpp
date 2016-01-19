@@ -68,7 +68,7 @@ static void updateVisibleProperties(const QtnPropertyBase* property, unsigned in
     }
 }
 
-extern void set_smaller_text_osx(QWidget *w);
+extern void qtn_set_smaller_text_osx(QWidget *w);
 
 QtnPropertyView::QtnPropertyView(QWidget* parent, QtnPropertySet* propertySet)
     : QAbstractScrollArea(parent),
@@ -84,7 +84,7 @@ QtnPropertyView::QtnPropertyView(QWidget* parent, QtnPropertySet* propertySet)
       m_rubberBand(nullptr),
       m_accessibilityProxy(nullptr)
 {
-  set_smaller_text_osx(this);
+  qtn_set_smaller_text_osx(this);
   
   setFocusPolicy(Qt::StrongFocus);
   viewport()->setMouseTracking(true);

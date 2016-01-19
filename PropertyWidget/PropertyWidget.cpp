@@ -63,7 +63,7 @@ protected:
 
 // It's safe to call this function on any platform.
 // It will only have an effect on the Mac.
-void set_smaller_text_osx(QWidget *w)
+void qtn_set_smaller_text_osx(QWidget *w)
 {
     Q_ASSERT(w != 0);
 
@@ -88,7 +88,7 @@ QtnPropertyWidget::QtnPropertyWidget(QWidget* parent)
       m_descriptionSplitter(0),
       m_descriptionPanel(0)
 {
-  set_smaller_text_osx(this);
+  qtn_set_smaller_text_osx(this);
   
   m_layout->addWidget(m_propertyView);
 
