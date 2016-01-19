@@ -23,6 +23,14 @@
 
 #include <QColorDialog>
 
+void regQColorDelegates()
+{
+  QtnPropertyDelegateFactory::staticInstance()
+    .registerDelegateDefault(&QtnPropertyQColorBase::staticMetaObject
+                 , &qtnCreateDelegate<QtnPropertyDelegateQColor, QtnPropertyQColorBase>
+                 , "LineEditBttn");
+}
+
 class QtnPropertyQColorLineEditBttnHandler: public QtnPropertyEditorHandler<QtnPropertyQColorBase, QtnLineEditBttn>
 {
 public:
@@ -61,70 +69,26 @@ private:
     }
 };
 
-bool regQColorDelegate() {
-  QtnPropertyDelegateFactory::staticInstance()
-    .registerDelegateDefault(&QtnPropertyQColorBase::staticMetaObject
-			     , &qtnCreateDelegate<QtnPropertyDelegateQColor, QtnPropertyQColorBase>
-			     , "LineEditBttn");
-  return true;
-}
-
 QtnPropertyDelegateQColor::QtnPropertyDelegateQColor(QtnPropertyQColorBase& owner)
     : QtnPropertyDelegateTypedEx<QtnPropertyQColorBase>(owner),
       m_shape(QtnColorDelegateShapeSquare),
       m_editor(QtnColorDelegateEditorDialog)
 {
-	// Red
-    QtnPropertyUIntCallback* propertyRed = new QtnPropertyUIntCallback(0);
-    addSubProperty(propertyRed);
-    propertyRed->setName(owner.tr("Red"));
-    propertyRed->setDescription(owner.tr("Red fraction of %1.").arg(owner.name()));
-    propertyRed->setCallbackValueGet([&owner]()->quint32 {
-        return owner.value().red();
-    });
-    propertyRed->setCallbackValueSet([&owner](quint32 value) {
-        QColor color = owner.value();
-        color.setRed((int)value);
-        owner.setValue(color);
-    });
-    propertyRed->setMinValue(0);
-    propertyRed->setMaxValue(255);
-	// Green
-    QtnPropertyUIntCallback* propertyGreen = new QtnPropertyUIntCallback(0);
-    addSubProperty(propertyGreen);
-    propertyGreen->setName(owner.tr("Green"));
-    propertyGreen->setDescription(owner.tr("Green fraction of %1.").arg(owner.name()));
-    propertyGreen->setCallbackValueGet([&owner]()->quint32 {
-        return owner.value().green();
-    });
-    propertyGreen->setCallbackValueSet([&owner](quint32 value) {
-        QColor color = owner.value();
-        color.setGreen((int)value);
-        owner.setValue(color);
-    });
-    propertyGreen->setMinValue(0);
-    propertyGreen->setMaxValue(255);
-	// Blue
-    QtnPropertyUIntCallback* propertyBlue = new QtnPropertyUIntCallback(0);
-    addSubProperty(propertyBlue);
-    propertyBlue->setName(owner.tr("Blue"));
-    propertyBlue->setDescription(owner.tr("Blue fraction of %1.").arg(owner.name()));
-    propertyBlue->setCallbackValueGet([&owner]()->quint32 {
-        return owner.value().blue();
-    });
-    propertyBlue->setCallbackValueSet([&owner](quint32 value) {
-        QColor color = owner.value();
-        color.setBlue((int)value);
-        owner.setValue(color);
-    });
-    propertyBlue->setMinValue(0);
-    propertyBlue->setMaxValue(255);
 }
 
 void QtnPropertyDelegateQColor::applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes)
 {
     qtnGetAttribute(attributes, "shape", m_shape);
     qtnGetAttribute(attributes, "editor", m_editor);
+
+    bool rgbSubItems = false;
+    qtnGetAttribute(attributes, "rgbSubItems", rgbSubItems);
+    if (rgbSubItems)
+    {
+        addSubProperty(qtnCreateRedProperty(0, &owner()));
+        addSubProperty(qtnCreateGreenProperty(0, &owner()));
+        addSubProperty(qtnCreateBlueProperty(0, &owner()));
+    }
 }
 
 void QtnPropertyDelegateQColor::drawValueImpl(QStylePainter& painter, const QRect& rect, const QStyle::State& state, bool* needTooltip) const
@@ -185,7 +149,7 @@ QWidget* QtnPropertyDelegateQColor::createValueEditorImpl(QWidget* parent, const
     return editor;
 }
 
-bool QtnPropertyDelegateQColor::propertyValueToStr(QString& strValue) const
+bool QtnPropertyDelegateQColor::propertyValueToStrImpl(QString& strValue) const
 {
     strValue = owner().value().name();
     return true;

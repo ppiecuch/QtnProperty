@@ -14,26 +14,34 @@
    limitations under the License.
 */
 
-#ifndef PROPERTY_DELEGATE_ENUM_H
-#define PROPERTY_DELEGATE_ENUM_H
+#ifndef PROPERTY_BUTTON_H
+#define PROPERTY_BUTTON_H
 
-#include "../PropertyDelegate.h"
+#include "../Property.h"
+#include <functional>
 
-class QtnPropertyEnumBase;
-
-class QTN_PW_EXPORT QtnPropertyDelegateEnum: public QtnPropertyDelegateTyped<QtnPropertyEnumBase>
+class QTN_PE_CORE_EXPORT QtnPropertyButton: public QtnProperty
 {
-    Q_DISABLE_COPY(QtnPropertyDelegateEnum)
+    Q_OBJECT
+    QtnPropertyButton(const QtnPropertyButton& other) Q_DECL_EQ_DELETE;
 
 public:
-    QtnPropertyDelegateEnum(QtnPropertyEnumBase& owner)
-        : QtnPropertyDelegateTyped<QtnPropertyEnumBase>(owner)
+    explicit QtnPropertyButton(QObject *parent)
+        : QtnProperty(parent)
     {
     }
 
-protected:
-    QWidget* createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo = nullptr) override;
-    bool propertyValueToStrImpl(QString& strValue) const override;
+    QtnPropertyButton& operator=(const QtnPropertyButton&)
+    {
+        // do nothing
+        return *this;
+    }
+
+    void invokeClick();
+    void setClickHandler(const std::function<void(const QtnPropertyButton*)>& clickHandler);
+
+Q_SIGNALS:
+    void click(const QtnPropertyButton* property);
 };
 
-#endif // PROPERTY_DELEGATE_ENUM_H
+#endif // PROPERTY_BUTTON_H

@@ -22,6 +22,14 @@
 #include <QComboBox>
 #include <QLineEdit>
 
+void regEnumDelegates()
+{
+  QtnPropertyDelegateFactory::staticInstance()
+    .registerDelegateDefault(&QtnPropertyEnumBase::staticMetaObject
+                 , &qtnCreateDelegate<QtnPropertyDelegateEnum, QtnPropertyEnumBase>
+                 , "ComboBox");
+}
+
 class QtnPropertyEnumComboBoxHandler: public QtnPropertyEditorHandler<QtnPropertyEnumBase, QComboBox>
 {
 public:
@@ -52,14 +60,6 @@ private:
             property() = data.toInt();
     }
 };
-
-bool regEnumDelegate() {
-  QtnPropertyDelegateFactory::staticInstance()
-    .registerDelegateDefault(&QtnPropertyEnumBase::staticMetaObject
-			     , &qtnCreateDelegate<QtnPropertyDelegateEnum, QtnPropertyEnumBase>
-			     , "ComboBox");
-  return true;
-}
 
 QWidget* QtnPropertyDelegateEnum::createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo)
 {
@@ -102,7 +102,7 @@ QWidget* QtnPropertyDelegateEnum::createValueEditorImpl(QWidget* parent, const Q
 
 }
 
-bool QtnPropertyDelegateEnum::propertyValueToStr(QString& strValue) const
+bool QtnPropertyDelegateEnum::propertyValueToStrImpl(QString& strValue) const
 {
     QtnEnumValueType value = owner().value();
     const QtnEnumInfo* info = owner().enumInfo();

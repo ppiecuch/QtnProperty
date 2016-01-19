@@ -18,10 +18,6 @@
 #define QTN_PROPERTY_H
 
 #include "PropertyBase.h"
-#include "Auxiliary/PropertyDelegateInfo.h"
-#include <functional>
-
-class QtnPropertyDelegateInfoGetter;
 
 class QTN_PE_CORE_EXPORT QtnProperty: public QtnPropertyBase
 {
@@ -30,11 +26,6 @@ class QTN_PE_CORE_EXPORT QtnProperty: public QtnPropertyBase
 
 public:
     virtual ~QtnProperty();
-
-    // delegates
-    const QtnPropertyDelegateInfo* delegate() const;
-    void setDelegate(const QtnPropertyDelegateInfo& delegate);
-    void setDelegateCallback(const std::function<const QtnPropertyDelegateInfo*()>& callback);
 
     // casts
     QtnProperty* asProperty() override { return this; }
@@ -45,15 +36,6 @@ Q_SIGNALS:
 
 protected:
     explicit QtnProperty(QObject* parent);
-
-private:
-    QScopedPointer<QtnPropertyDelegateInfoGetter> m_delegateInfoGetter;
 };
-
-#ifndef __ID
-# define __IDT(v,y) v##y
-# define __ID2(v,y) __IDT(x,y)
-# define __ID(v) __ID2(v, __LINE__)
-#endif
 
 #endif // QTN_PROPERTY_H

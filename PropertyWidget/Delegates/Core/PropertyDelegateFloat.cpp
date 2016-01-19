@@ -21,6 +21,14 @@
 
 #include <QDoubleSpinBox>
 
+void regFloatDelegates()
+{
+  QtnPropertyDelegateFactory::staticInstance()
+    .registerDelegateDefault(&QtnPropertyFloatBase::staticMetaObject
+                 , &qtnCreateDelegate<QtnPropertyDelegateFloat, QtnPropertyFloatBase>
+                 , "SpinBox");
+}
+
 class QtnPropertyFloatSpinBoxHandler: public QtnPropertyEditorHandler<QtnPropertyFloatBase, QDoubleSpinBox>
 {
 public:
@@ -52,14 +60,6 @@ private:
     }
 };
 
-bool regFloatDelegate() {
-  QtnPropertyDelegateFactory::staticInstance()
-    .registerDelegateDefault(&QtnPropertyFloatBase::staticMetaObject
-			     , &qtnCreateDelegate<QtnPropertyDelegateFloat, QtnPropertyFloatBase>
-			     , "SpinBox");
-  return true;
-}
-
 QWidget* QtnPropertyDelegateFloat::createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo)
 {
     QDoubleSpinBox *spinBox = new QDoubleSpinBox(parent);
@@ -75,7 +75,7 @@ QWidget* QtnPropertyDelegateFloat::createValueEditorImpl(QWidget* parent, const 
     return spinBox;
 }
 
-bool QtnPropertyDelegateFloat::propertyValueToStr(QString& strValue) const
+bool QtnPropertyDelegateFloat::propertyValueToStrImpl(QString& strValue) const
 {
     strValue = QString::number(owner().value());
     return true;

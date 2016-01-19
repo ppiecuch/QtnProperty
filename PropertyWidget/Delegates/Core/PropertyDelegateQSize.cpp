@@ -20,12 +20,12 @@
 
 #include <QLineEdit>
 
-bool regQSizeDelegate() {
+void regQSizeDelegates()
+{
   QtnPropertyDelegateFactory::staticInstance()
     .registerDelegateDefault(&QtnPropertyQSizeBase::staticMetaObject
 			     , &qtnCreateDelegate<QtnPropertyDelegateQSize, QtnPropertyQSizeBase>
 			     , "WH");
-  return true;
 }
 
 QtnPropertyDelegateQSize::QtnPropertyDelegateQSize(QtnPropertyQSizeBase& owner)
@@ -40,7 +40,7 @@ QWidget* QtnPropertyDelegateQSize::createValueEditorImpl(QWidget* parent, const 
     return createValueEditorLineEdit(parent, rect, true, inplaceInfo);
 }
 
-bool QtnPropertyDelegateQSize::propertyValueToStr(QString& strValue) const
+bool QtnPropertyDelegateQSize::propertyValueToStrImpl(QString& strValue) const
 {
     QSize value = owner().value();
     strValue = QString("%1 x %2").arg(value.width()).arg(value.height());

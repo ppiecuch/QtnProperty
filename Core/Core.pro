@@ -1,12 +1,13 @@
 include(../Config.pri)
 
 QT += quick
+QT += script
 CONFIG += staticlib
+CONFIG += unity_build
 
 TARGET = QtnPropertyCore
 TEMPLATE = lib
 VERSION = 1.0.0
-
 
 
 CONFIG(staticlib) {
@@ -14,7 +15,8 @@ CONFIG(staticlib) {
 }
 DEFINES += QTN_PE_CORE_LIBRARY
 
-SOURCES += PropertyBase.cpp \
+unity_build: SOURCES += QtnCoreUnity.cpp
+else: SOURCES += PropertyBase.cpp \
     Property.cpp \
     PropertySet.cpp \
     Enum.cpp \
@@ -31,6 +33,7 @@ SOURCES += PropertyBase.cpp \
     Core/PropertyQSize.cpp \
     Core/PropertyQPoint.cpp \
     GUI/PropertyQColor.cpp \
+    GUI/PropertyButton.cpp \
     GUI/PropertyQFont.cpp
 
 HEADERS += CoreAPI.h\
@@ -57,4 +60,5 @@ HEADERS += CoreAPI.h\
     Core/PropertyQSize.h \
     Core/PropertyQPoint.h \
     GUI/PropertyQColor.h \
+    GUI/PropertyButton.h \
     GUI/PropertyQFont.h

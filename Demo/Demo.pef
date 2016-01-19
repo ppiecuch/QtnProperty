@@ -26,6 +26,22 @@ property_set SamplePS
         value = false;
     }
 
+    Button ButtonProperty
+    {
+        clickHandler = [](const QtnPropertyButton* bttn) {
+            qDebug() << Q_FUNC_INFO << "Button has clicked: " << bttn;
+        };
+        
+        delegate { title = "Click me"; }
+    }
+
+    QColor RGBColor
+    {
+        description = "QColor property with RGB components";
+        value = QColor(123, 150, 10);
+        delegate { rgbSubItems = true; }
+    }
+
     Double DoubleProperty
     {
         description = "Property to hold double values in range [10, 20].";
@@ -184,7 +200,7 @@ property_set SamplePS
         value = Qt::blue;
         slot propertyDidChange
         {
-            qDebug() << Q_FUNC_INFO << "Poperty has changed: " << this;
+            qDebug() << Q_FUNC_INFO << "Property has changed: " << &QColorProperty;
         }
         delegate { editor = QtnColorDelegateEditorNone; }
     }

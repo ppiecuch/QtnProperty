@@ -21,6 +21,14 @@
 
 #include <QSpinBox>
 
+void regUIntDelegates()
+{
+  QtnPropertyDelegateFactory::staticInstance()
+                                .registerDelegateDefault(&QtnPropertyUIntBase::staticMetaObject
+                                , &qtnCreateDelegate<QtnPropertyDelegateUInt, QtnPropertyUIntBase>
+                                , "SpinBox");
+}
+
 const quint32 qtn_u_2 = std::numeric_limits<quint32>::max() / 2 + 1;
 static qint32 qtn_u2i(quint32 val)
 {
@@ -81,15 +89,6 @@ protected:
     }
 };
 
-bool regUIntDelegate()
-{
-  QtnPropertyDelegateFactory::staticInstance()
-                                .registerDelegateDefault(&QtnPropertyUIntBase::staticMetaObject
-                                , &qtnCreateDelegate<QtnPropertyDelegateUInt, QtnPropertyUIntBase>
-                                , "SpinBox");
-  return true;                                
-}
-
 QWidget* QtnPropertyDelegateUInt::createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo)
 {
     QSpinBox* spinBox = new SpinBoxUnsigned(parent);
@@ -105,7 +104,7 @@ QWidget* QtnPropertyDelegateUInt::createValueEditorImpl(QWidget* parent, const Q
     return spinBox;
 }
 
-bool QtnPropertyDelegateUInt::propertyValueToStr(QString& strValue) const
+bool QtnPropertyDelegateUInt::propertyValueToStrImpl(QString& strValue) const
 {
     strValue = QString::number(owner().value());
     return true;

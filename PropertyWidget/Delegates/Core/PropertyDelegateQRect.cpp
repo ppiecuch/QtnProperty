@@ -20,12 +20,12 @@
 
 #include <QLineEdit>
 
-bool regQRectDelegate() {
+void regQRectDelegates()
+{
   QtnPropertyDelegateFactory::staticInstance()
     .registerDelegateDefault(&QtnPropertyQRectBase::staticMetaObject
 			     , &qtnCreateDelegate<QtnPropertyDelegateQRect, QtnPropertyQRectBase>
 			     , "LTWH");
-  return true;
 }
 
 QtnPropertyDelegateQRect::QtnPropertyDelegateQRect(QtnPropertyQRectBase& owner)
@@ -42,7 +42,7 @@ QWidget* QtnPropertyDelegateQRect::createValueEditorImpl(QWidget* parent, const 
     return createValueEditorLineEdit(parent, rect, true, inplaceInfo);
 }
 
-bool QtnPropertyDelegateQRect::propertyValueToStr(QString& strValue) const
+bool QtnPropertyDelegateQRect::propertyValueToStrImpl(QString& strValue) const
 {
     QRect value = owner().value();
     strValue = QString("[(%1, %2), %3 x %4]").arg(value.left()).arg(value.top()).arg(value.width()).arg(value.height());

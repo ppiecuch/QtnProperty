@@ -27,6 +27,14 @@
 #include <QFontDialog>
 #include <QFontDatabase>
 
+void regQFontDelegates()
+{
+  QtnPropertyDelegateFactory::staticInstance()
+    .registerDelegateDefault(&QtnPropertyQFontBase::staticMetaObject
+                 , &qtnCreateDelegate<QtnPropertyDelegateQFont, QtnPropertyQFontBase>
+                 , "LineEditBttn");
+}
+
 class QtnPropertyQFontLineEditBttnHandler: public QtnPropertyEditorHandler<QtnPropertyQFontBase, QtnLineEditBttn>
 {
 public:
@@ -65,14 +73,6 @@ private:
         }
     }
 };
-
-bool regQFontDelegate() {
-  QtnPropertyDelegateFactory::staticInstance()
-    .registerDelegateDefault(&QtnPropertyQFontBase::staticMetaObject
-			     , &qtnCreateDelegate<QtnPropertyDelegateQFont, QtnPropertyQFontBase>
-			     , "LineEditBttn");
-  return true;
-}
 
 static QtnEnumInfo* styleStrategyEnum()
 {
@@ -247,7 +247,7 @@ QWidget* QtnPropertyDelegateQFont::createValueEditorImpl(QWidget* parent, const 
     return editor;
 }
 
-bool QtnPropertyDelegateQFont::propertyValueToStr(QString& strValue) const
+bool QtnPropertyDelegateQFont::propertyValueToStrImpl(QString& strValue) const
 {
     QFont value = owner().value();
     strValue = QString("[%1, %2]").arg(value.family()).arg(value.pointSize());

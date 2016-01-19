@@ -14,23 +14,26 @@
    limitations under the License.
 */
 
-#ifndef PROPERTY_DELEGATE_QRECT_H
-#define PROPERTY_DELEGATE_QRECT_H
+#ifndef PROPERTY_DELEGATE_BUTTON_H
+#define PROPERTY_DELEGATE_BUTTON_H
 
 #include "../PropertyDelegate.h"
 
-class QtnPropertyQRectBase;
+class QtnPropertyButton;
 
-class QTN_PW_EXPORT QtnPropertyDelegateQRect: public QtnPropertyDelegateTypedEx<QtnPropertyQRectBase>
+class QTN_PW_EXPORT QtnPropertyDelegateButton: public QtnPropertyDelegateTyped<QtnPropertyButton, QtnPropertyDelegate>
 {
-    Q_DISABLE_COPY(QtnPropertyDelegateQRect)
+    Q_DISABLE_COPY(QtnPropertyDelegateButton)
 
 public:
-    QtnPropertyDelegateQRect(QtnPropertyQRectBase& owner);
+    QtnPropertyDelegateButton(QtnPropertyButton& owner);
 
 protected:
-    QWidget* createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo = nullptr) override;
-    bool propertyValueToStrImpl(QString& strValue) const override;
+    void applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes) override;
+    void createSubItemsImpl(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems) override;
+
+private:
+    QString m_title;
 };
 
-#endif // PROPERTY_DELEGATE_QRECT_H
+#endif // PROPERTY_DELEGATE_BUTTON_H

@@ -21,6 +21,15 @@
 
 #include <QSpinBox>
 
+void regIntDelegates()
+{
+  QtnPropertyDelegateFactory::staticInstance()
+    .registerDelegateDefault(&QtnPropertyIntBase::staticMetaObject
+                 , &qtnCreateDelegate<QtnPropertyDelegateInt, QtnPropertyIntBase>
+                 , "SpinBox");
+}
+
+
 class QtnPropertyIntSpinBoxHandler: public QtnPropertyEditorHandler<QtnPropertyIntBase, QSpinBox>
 {
 public:
@@ -51,14 +60,6 @@ private:
     }
 };
 
-bool regIntDelegate() {
-  QtnPropertyDelegateFactory::staticInstance()
-    .registerDelegateDefault(&QtnPropertyIntBase::staticMetaObject
-			     , &qtnCreateDelegate<QtnPropertyDelegateInt, QtnPropertyIntBase>
-			     , "SpinBox");
-  return true;
-}
-
 QWidget* QtnPropertyDelegateInt::createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo)
 {
     QSpinBox* spinBox = new QSpinBox(parent);
@@ -74,7 +75,7 @@ QWidget* QtnPropertyDelegateInt::createValueEditorImpl(QWidget* parent, const QR
     return spinBox;
 }
 
-bool QtnPropertyDelegateInt::propertyValueToStr(QString& strValue) const
+bool QtnPropertyDelegateInt::propertyValueToStrImpl(QString& strValue) const
 {
     strValue = QString::number(owner().value());
     return true;
