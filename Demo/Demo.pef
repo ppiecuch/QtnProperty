@@ -202,7 +202,10 @@ property_set SamplePS
         {
             qDebug() << Q_FUNC_INFO << "Property has changed: " << &QColorProperty;
         }
-        delegate { editor = QtnColorDelegateEditorNone; }
+        delegate {
+        	editor = QtnColorDelegateEditorNone;
+        	rgbSubItems = true;
+        }
     }
 
     QFont QFontProperty
