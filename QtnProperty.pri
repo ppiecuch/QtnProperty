@@ -79,6 +79,7 @@ HEADERS += CoreAPI.h\
     Core/PropertyEnumFlags.h \
     Core/PropertyQSize.h \
     Core/PropertyQPoint.h \
+    GUI/PropertyButton.h \
     GUI/PropertyQColor.h \
     GUI/PropertyQFont.h
 
@@ -98,10 +99,11 @@ HEADERS += PropertyWidgetAPI.h \
     Delegates/Core/PropertyDelegateEnum.h \
     Delegates/Core/PropertyDelegateQRect.h \
     Delegates/PropertyEditorHandler.h \
-    Delegates/GUI/PropertyDelegateQColor.h \
     Delegates/Core/PropertyDelegateEnumFlags.h \
     Delegates/PropertyEditorAux.h \
     Delegates/Core/PropertyDelegateQSize.h \
     Delegates/Core/PropertyDelegateQPoint.h \
+    Delegates/GUI/PropertyDelegateButton.h \
+    Delegates/GUI/PropertyDelegateQColor.h \
     Delegates/GUI/PropertyDelegateQFont.h
 
