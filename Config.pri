@@ -12,8 +12,8 @@ debug: DBG = dgb-
 else: DBG = rel-
 
 OBJECTS_DIR = $$TOP_SRC_DIR/workdir/$$DBG$$[QMAKE_SPEC]/$$TARGET/obj
-MOC_DIR = $$TOP_SRC_DIR/workdir/$$DBG$$[QMAKE_SPEC]/$$TARGET/obj
-UI_DIR = $$TOP_SRC_DIR/workdir/$$DBG$$[QMAKE_SPEC]/$$TARGET/obj
-RCC_DIR = $$TOP_SRC_DIR/workdir/$$DBG$$[QMAKE_SPEC]/$$TARGET/obj
+MOC_DIR = $$TOP_SRC_DIR/workdir/$$DBG$$[QMAKE_SPEC]/$$TARGET/ui
+UI_DIR = $$TOP_SRC_DIR/workdir/$$DBG$$[QMAKE_SPEC]/$$TARGET/ui
+RCC_DIR = $$TOP_SRC_DIR/workdir/$$DBG$$[QMAKE_SPEC]/$$TARGET/ui
 
 include("Common.pri")
