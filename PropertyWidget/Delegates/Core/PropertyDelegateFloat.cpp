@@ -107,23 +107,27 @@ void QtnPropertyDelegateFloatSlideBox::draw(QtnPropertyDelegateDrawContext& cont
 
     float valuePart = (owner().value() - owner().minValue())/valueInterval;
 
-    auto boxBorderColor = m_boxFillColor.darker();
-
     auto boxRect = item.rect;
-    boxRect.adjust(1, 1, -1, -1);
-
+    boxRect.adjust(-1, 1, 0, -1);
     auto valueRect = boxRect;
     valueRect.setRight(valueRect.left() + int(valuePart * valueRect.width()));
+    valueRect.setTop(valueRect.bottom()-2);
 
     auto& painter = *context.painter;
 
     painter.save();
 
-    painter.fillRect(valueRect, m_boxFillColor);
+    painter.setPen(m_boxFillColor.lighter(110));
+    painter.drawLine(boxRect.left(),boxRect.bottom(),boxRect.left(),boxRect.bottom()-4);
+    painter.drawLine(boxRect.left()+boxRect.width()/2,boxRect.bottom(),boxRect.left()+boxRect.width()/2,boxRect.bottom()-4);
+    painter.drawLine(boxRect.right(),boxRect.bottom(),boxRect.right(),boxRect.bottom()-4);
+    painter.drawLine(boxRect.left()+boxRect.width()*0.25,boxRect.bottom(),boxRect.left()+boxRect.width()*0.25,boxRect.bottom()-3);
+    painter.drawLine(boxRect.left()+boxRect.width()*0.75,boxRect.bottom(),boxRect.left()+boxRect.width()*0.75,boxRect.bottom()-3);
 
-    painter.setPen(boxBorderColor);
-    painter.drawRect(valueRect);
-    painter.drawRect(boxRect);
+	QLinearGradient gradient(boxRect.topLeft(), boxRect.bottomRight()); // diagonal gradient from top-left to bottom-right
+	gradient.setColorAt(0, m_boxFillColor.lighter(125));
+	gradient.setColorAt(1, m_boxFillColor);
+    painter.fillRect(valueRect, gradient);
 
     painter.restore();
 

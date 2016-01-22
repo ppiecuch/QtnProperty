@@ -54,8 +54,8 @@ SOURCES_WIDGET += PropertyWidget.cpp \
     Delegates/GUI/PropertyDelegateQAction.cpp
 
 !isEmpty(AB_BUILD) {
-	SOURCES_AB = AB/PropertyABColor.cpp AB/PropertyDelegateABColor.cpp
-	HEADERS_AB = AB/PropertyABColor.h AB/PropertyDelegateABColor.h
+	SOURCES_AB = Contrib/AB/PropertyABColor.cpp Contrib/AB/PropertyDelegateABColor.cpp
+	HEADERS_AB = Contrib/AB/PropertyABColor.h Contrib/AB/PropertyDelegateABColor.h
 }
 
 unity_build: SOURCES += $$PWD/QtnPropertyUnity.cpp
