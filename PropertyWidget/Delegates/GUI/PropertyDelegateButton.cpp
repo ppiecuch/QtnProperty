@@ -21,10 +21,15 @@
 
 void regButtonDelegates()
 {
-  QtnPropertyDelegateFactory::staticInstance()
-    .registerDelegateDefault(&QtnPropertyButton::staticMetaObject
-                 , &qtnCreateDelegate<QtnPropertyDelegateButton, QtnPropertyButton>
-                 , "Button");
+    QtnPropertyDelegateFactory::staticInstance()
+      .registerDelegateDefault(&QtnPropertyButton::staticMetaObject
+                   , &qtnCreateDelegate<QtnPropertyDelegateButton, QtnPropertyButton>
+                   , "Button");
+
+    QtnPropertyDelegateFactory::staticInstance()
+      .registerDelegate(&QtnPropertyButton::staticMetaObject
+                   , &qtnCreateDelegate<QtnPropertyDelegateButtonLink, QtnPropertyButton>
+                   , "Link");
 }
 
 QtnPropertyDelegateButton::QtnPropertyDelegateButton(QtnPropertyButton& owner)
@@ -40,65 +45,37 @@ void QtnPropertyDelegateButton::applyAttributesImpl(const QtnPropertyDelegateAtt
 
 void QtnPropertyDelegateButton::createSubItemsImpl(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems)
 {
-    QtnPropertyDelegateSubItem buttonItem;
-    buttonItem.rect = context.rect;//.marginsRemoved(context.margins);
+    QtnPropertyDelegateSubItem buttonItem(true);
+    buttonItem.rect = context.rect;
 
     buttonItem.drawHandler = [this](QtnPropertyDelegateDrawContext& context, const QtnPropertyDelegateSubItem& item) {
-
-        context.painter->save();
 
         auto style = context.style();
 
         QStyleOptionButton option;
         context.initStyleOption(option);
 
-        option.state = QStyle::State_Active;
-        if (property()->isEditableByUser())
-            option.state |= QStyle::State_Enabled;
-        if (context.isActive)
-        {
-            option.state |= QStyle::State_Selected;
-            option.state |= QStyle::State_HasFocus;
-            option.state |= QStyle::State_MouseOver;
-        }
+        option.state = state(context.isActive, item.state());
 
         // dont initialize styleObject from widget for QWindowsVistaStyle
         // this disables buggous animations
         if (style->inherits("QWindowsVistaStyle"))
             option.styleObject = nullptr;
 
-        //option.state |= m_pushableTracker.styleStateByItem(cache.item);
         option.rect = item.rect;
+        option.text = m_title;
+
+        owner().invokePreDrawButton(&option);
 
         // draw button
-        style->drawControl(QStyle::CE_PushButtonBevel, &option, context.painter, context.widget);
-
-        // setup standard palette
-        auto cg = context.colorGroup();
-        context.painter->setPen(context.palette().color(cg, QPalette::ButtonText));
-        context.painter->setBackground(context.palette().brush(cg, QPalette::Button));
-
-        // shift sub-view's origin if button has pressed
-        if (option.state & QStyle::State_Sunken)
-            context.painter->translate(QPoint(1, 1));
-
-        int bttnMargin = style->pixelMetric(QStyle::PM_ButtonMargin);
-        QRect contentRect = item.rect.marginsRemoved(QMargins(bttnMargin, 0, bttnMargin, 0));
-        context.painter->drawText(contentRect, Qt::AlignHCenter | Qt::AlignVCenter
-                         , qtnElidedText(*context.painter, m_title, contentRect));
-
-        // restore sub-view's origin if button has pressed
-        if (option.state & QStyle::State_Sunken)
-            context.painter->translate(QPoint(-1, -1));
-
-        context.painter->restore();
+        style->drawControl(QStyle::CE_PushButton, &option, context.painter, context.widget);
     };
 
     buttonItem.eventHandler = [this](QtnPropertyDelegateEventContext& context, const QtnPropertyDelegateSubItem&) -> bool {
         bool doClick = false;
         switch (context.eventType())
         {
-        case QEvent::MouseButtonRelease:
+        case QtnPropertyDelegateSubItem::SubItemReleaseMouse:
             doClick = true;
             break;
 
@@ -117,6 +94,83 @@ void QtnPropertyDelegateButton::createSubItemsImpl(QtnPropertyDelegateDrawContex
         return false;
     };
 
-
     subItems.append(buttonItem);
+}
+
+QtnPropertyDelegateButtonLink::QtnPropertyDelegateButtonLink(QtnPropertyButton& owner)
+    : QtnPropertyDelegateButton(owner)
+{
+}
+
+void QtnPropertyDelegateButtonLink::createSubItemsImpl(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems)
+{
+    QtnPropertyDelegateSubItem linkItem(true);
+    linkItem.rect = context.rect.marginsRemoved(context.margins);
+    linkItem.rect.setWidth(context.painter->fontMetrics().width(m_title));
+
+    linkItem.drawHandler = [this](QtnPropertyDelegateDrawContext& context, const QtnPropertyDelegateSubItem& item) {
+
+        context.painter->save();
+
+        QColor linkColor = context.palette().color(context.colorGroup(), QPalette::Link);
+        switch (item.state())
+        {
+        case QtnSubItemStateUnderCursor:
+            linkColor = linkColor.lighter();
+            break;
+
+        case QtnSubItemStatePushed:
+            linkColor = linkColor.darker();
+            break;
+
+        default:;
+        }
+
+        context.painter->setPen(linkColor);
+
+        context.painter->drawText(item.rect, Qt::AlignLeading | Qt::AlignVCenter, m_title);
+
+        context.painter->restore();
+    };
+
+    linkItem.eventHandler = [this](QtnPropertyDelegateEventContext& context, const QtnPropertyDelegateSubItem&) -> bool {
+        bool doClick = false;
+        switch (context.eventType())
+        {
+        case QEvent::KeyPress:
+        {
+            int key = context.eventAs<QKeyEvent>()->key();
+            doClick = (key == Qt::Key_Space) || (key == Qt::Key_Return);
+        } break;
+
+        case QtnPropertyDelegateSubItem::SubItemActivated:
+        {
+            m_widgetCursor = context.widget->cursor();
+            context.widget->setCursor(Qt::PointingHandCursor);
+        } break;
+
+        case QtnPropertyDelegateSubItem::SubItemDeactivated:
+        {
+            context.widget->setCursor(m_widgetCursor);
+        } break;
+
+        case QtnPropertyDelegateSubItem::SubItemReleaseMouse:
+        {
+            doClick = true;
+        } break;
+
+        default:
+            ;
+        }
+
+        if (doClick)
+        {
+            owner().invokeClick();
+            return true;
+        }
+
+        return false;
+    };
+
+    subItems.append(linkItem);
 }

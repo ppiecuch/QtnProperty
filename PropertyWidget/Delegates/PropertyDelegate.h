@@ -55,7 +55,7 @@ protected:
     virtual void createSubItemsImpl(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems) = 0;
 
     // helper functions
-    QStyle::State state(bool isActive) const;
+    QStyle::State state(bool isActive, QtnPropertyDelegateSubItemState subState) const;
     static void drawValueText(const QString& text, QStylePainter& painter, const QRect& rect, QStyle::State state, bool* needTooltip = nullptr);
 };
 
@@ -168,6 +168,7 @@ public:
         : QtnPropertyDelegateTyped<PropertyClass, DelegateClass>(owner)
     {
         m_boxFillColor = QColor::fromRgb(200, 200, 255);
+        m_dragValue = 0;
     }
 
 protected:
@@ -177,8 +178,10 @@ protected:
 protected:
     void draw(QtnPropertyDelegateDrawContext& context, const QtnPropertyDelegateSubItem& item);
     bool event(QtnPropertyDelegateEventContext& context, const QtnPropertyDelegateSubItem& item);
+    void updateDragValue(int x, const QRect& rect);
 
     QColor m_boxFillColor;
+    float m_dragValue;
 };
 
 

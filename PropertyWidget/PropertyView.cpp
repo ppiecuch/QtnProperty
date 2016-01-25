@@ -76,12 +76,14 @@ QtnPropertyView::QtnPropertyView(QWidget* parent, QtnPropertySet* propertySet)
       m_activeProperty(nullptr),
       m_delegateFactory(&QtnPropertyDelegateFactory::staticInstance()),
       m_visibleItemsValid(false),
+      m_grabMouseSubItem(nullptr),
       m_style(QtnPropertyViewStyleLiveSplit),
       m_itemHeight(0),
       m_itemHeightSpacing(6),
       m_valueLeftMargin(0),
       m_splitRatio(0.5f),
       m_rubberBand(nullptr),
+      m_mouseAtSplitter(false),
       m_accessibilityProxy(nullptr)
 {
   qtn_set_smaller_text_osx(this);
@@ -235,10 +237,7 @@ void QtnPropertyView::drawItem(QStylePainter& painter, const QRect& rect, const 
     // draw sub-items
     for (const auto& subItem : vItem.subItems)
     {
-        if (!subItem.drawHandler)
-            continue;
-
-        subItem.drawHandler(drawContext, subItem);
+        subItem.draw(drawContext);
     }
 }
 
@@ -280,14 +279,16 @@ QRect QtnPropertyView::visibleItemRect(int index) const
     return rect;
 }
 
-bool QtnPropertyView::processItemActionByMouse(int index, QEvent* e)
+bool QtnPropertyView::handleMouseEvent(int index, QEvent* e, QPoint mousePos)
 {
     if (index < 0)
+    {
+        deactivateSubItems();
         return false;
+    }
 
-    const auto& vItem = m_visibleItems[index];
     QtnPropertyDelegateEventContext context{e, this};
-    return vItem.handleEvent(context);
+    return handleEvent(context, m_visibleItems[index], mousePos);
 }
 
 void QtnPropertyView::resizeEvent(QResizeEvent* e)
@@ -320,7 +321,7 @@ void QtnPropertyView::mousePressEvent(QMouseEvent* e)
         if (index >= 0)
         {
             changeActivePropertyByIndex(index);
-            processItemActionByMouse(index, e);
+            handleMouseEvent(index, e, e->pos());
         }
     }
 }
@@ -338,7 +339,7 @@ void QtnPropertyView::mouseReleaseEvent(QMouseEvent* e)
     }
     else
     {
-        processItemActionByMouse(visibleItemIndexByPoint(e->pos()), e);
+        handleMouseEvent(visibleItemIndexByPoint(e->pos()), e, e->pos());
     }
 }
 
@@ -360,20 +361,26 @@ void QtnPropertyView::mouseMoveEvent(QMouseEvent* e)
     }
     else if (qAbs(e->x() - splitPosition()) < TOLERANCE)
     {
-        setCursor(Qt::SplitHCursor);
+        if (!m_mouseAtSplitter)
+        {
+            m_mouseAtSplitter = true;
+            m_oldCursor = cursor();
+            setCursor(Qt::SplitHCursor);
+        }
     }
     else
     {
-        setCursor(Qt::ArrowCursor);
+        if (m_mouseAtSplitter)
+        {
+            m_mouseAtSplitter = false;
+            setCursor(m_oldCursor);
+        }
 
         int index = visibleItemIndexByPoint(e->pos());
-        if (index >= 0)
-        {
-            if (e->buttons() & Qt::LeftButton)
-                changeActivePropertyByIndex(index);
-            else
-                processItemActionByMouse(index, e);
-        }
+        if (e->buttons() & Qt::LeftButton)
+            changeActivePropertyByIndex(index);
+        //else
+        handleMouseEvent(index, e, e->pos());
     }
 }
 
@@ -381,7 +388,7 @@ void QtnPropertyView::mouseDoubleClickEvent(QMouseEvent* e)
 {
     if (!m_rubberBand)
     {
-       processItemActionByMouse(visibleItemIndexByPoint(e->pos()), e);
+       handleMouseEvent(visibleItemIndexByPoint(e->pos()), e, e->pos());
     }
 }
 
@@ -398,6 +405,11 @@ bool QtnPropertyView::viewportEvent(QEvent* e)
             QHelpEvent* helpEvent = static_cast<QHelpEvent*>(e);
             tooltipEvent(helpEvent);
         }
+        break;
+
+    //case QEvent::Enter:
+    case QEvent::Leave:
+        deactivateSubItems();
         break;
 
     default:
@@ -562,7 +574,7 @@ void QtnPropertyView::keyPressEvent(QKeyEvent* e)
             if (index >= 0)
             {
                 QtnPropertyDelegateEventContext context{e, this};
-                if (m_visibleItems[index].handleEvent(context))
+                if (handleEvent(context, m_visibleItems[index], QPoint()))
                 {
                     // eat event
                     e->accept();
@@ -578,7 +590,7 @@ void QtnPropertyView::keyPressEvent(QKeyEvent* e)
 
 void QtnPropertyView::wheelEvent(QWheelEvent *e)
 {
-    bool processed = processItemActionByMouse(visibleItemIndexByPoint(e->pos()), e);
+    bool processed = handleMouseEvent(visibleItemIndexByPoint(e->pos()), e, e->pos());
     if (processed)
         return;
 
@@ -637,29 +649,77 @@ void QtnPropertyView::tooltipEvent(QHelpEvent* e)
     }
 }
 
-bool QtnPropertyView::VisibleItem::handleEvent(QtnPropertyDelegateEventContext& context) const
+bool QtnPropertyView::handleEvent(QtnPropertyDelegateEventContext& context, VisibleItem& vItem, QPoint mousePos)
 {
-    if (!subItemsValid)
+    if (!vItem.subItemsValid)
         return false;
 
-    QPoint pos;
-
-    if (context.eventType() >= QEvent::MouseButtonPress && context.eventType() <= QEvent::MouseMove)
-        pos = context.eventAs<QMouseEvent>()->pos();
-    else if (context.eventType() == QEvent::Wheel)
-        pos = context.eventAs<QWheelEvent>()->pos();
-
-    for (const auto& subItem: subItems)
+    // process event
+    if (m_grabMouseSubItem)
+        return m_grabMouseSubItem->event(context);
+    else
     {
-        if (subItem.eventHandler && (pos.isNull() || subItem.rect.contains(pos)))
+        // update list of sub items under cursor
+        QList<QtnPropertyDelegateSubItem*> activeSubItems;
+
+        // make list of new active sub items
+        for (auto& subItem: vItem.subItems)
         {
-            if (subItem.eventHandler(context, subItem))
+            if (mousePos.isNull() || subItem.rect.contains(mousePos))
+            {
+                subItem.activate(this);
+                activeSubItems.append(&subItem);
+            }
+        }
+
+        // deactivate old sub items
+        for (auto activeSubItem : m_activeSubItems)
+        {
+            activeSubItem->deactivate(this);
+        }
+
+        // adopt new active sub items
+        m_activeSubItems.swap(activeSubItems);
+
+        for (auto activeSubItem : m_activeSubItems)
+        {
+            if (activeSubItem->event(context))
                 return true;
         }
     }
 
     return false;
 }
+
+bool QtnPropertyView::grabMouseForSubItem(QtnPropertyDelegateSubItem* subItem)
+{
+    qDebug() << "grab " << m_grabMouseSubItem << " - " << subItem;
+    Q_ASSERT(!m_grabMouseSubItem);
+    if (m_grabMouseSubItem)
+        return false;
+
+    viewport()->grabMouse();
+    m_grabMouseSubItem = subItem;
+    m_grabMouseSubItem->grabMouse(this);
+
+    return true;
+}
+
+bool QtnPropertyView::releaseMouseForSubItem(QtnPropertyDelegateSubItem* subItem)
+{
+    qDebug() << "release " << m_grabMouseSubItem << " - " << subItem;
+    Q_UNUSED(subItem);
+    Q_ASSERT(m_grabMouseSubItem == subItem);
+    if (!m_grabMouseSubItem)
+        return false;
+
+    m_grabMouseSubItem->releaseMouse(this);
+    m_grabMouseSubItem = nullptr;
+    viewport()->releaseMouse();
+
+    return true;
+}
+
 
 void QtnPropertyView::updateItemsTree()
 {
@@ -706,7 +766,9 @@ QtnPropertyView::Item* QtnPropertyView::createItemsTree(QtnPropertyBase* rootPro
 
 void QtnPropertyView::invalidateVisibleItems()
 {
+    deactivateSubItems();
     m_visibleItemsValid = false;
+    m_visibleItems.clear();
     update();
 }
 
@@ -715,7 +777,7 @@ void QtnPropertyView::validateVisibleItems() const
     if (m_visibleItemsValid)
         return;
 
-    m_visibleItems.clear();
+    //m_visibleItems.clear();
     fillVisibleItems(m_itemsTree.data(), (m_style & QtnPropertyViewStyleShowRoot) ? 0 : -1);
 
     updateVScrollbar();
@@ -827,11 +889,28 @@ bool QtnPropertyView::ensureVisibleItemByIndex(int index)
 
 void QtnPropertyView::invalidateSubItems()
 {
+    deactivateSubItems();
+
     for (auto& item: m_visibleItems)
     {
         item.subItemsValid = false;
         item.subItems.clear();
     }
+}
+
+void QtnPropertyView::deactivateSubItems()
+{
+    if (m_grabMouseSubItem)
+    {
+        qDebug() << "deactivate " << m_grabMouseSubItem;
+        viewport()->releaseMouse();
+        m_grabMouseSubItem = nullptr;
+    }
+
+    for (auto subItem : m_activeSubItems)
+        subItem->deactivate(this);
+
+    m_activeSubItems.clear();
 }
 
 int QtnPropertyView::splitPosition() const
