@@ -36,26 +36,15 @@ protected:
     bool propertyValueToStrImpl(QString& strValue) const override;
 };
 
-class QTN_PW_EXPORT QtnPropertyDelegateFloatSlideBox: public QtnPropertyDelegateTyped<QtnPropertyFloatBase, QtnPropertyDelegateWithValue>
+class QTN_PW_EXPORT QtnPropertyDelegateFloatSlideBox: public QtnPropertyDelegateSlideBox<QtnPropertyFloatBase, QtnPropertyDelegateWithValue>
 {
     Q_DISABLE_COPY(QtnPropertyDelegateFloatSlideBox)
 
 public:
     QtnPropertyDelegateFloatSlideBox(QtnPropertyFloatBase& owner)
-        : QtnPropertyDelegateTyped<QtnPropertyFloatBase, QtnPropertyDelegateWithValue>(owner)
+        : QtnPropertyDelegateSlideBox<QtnPropertyFloatBase, QtnPropertyDelegateWithValue>(owner)
     {
-        m_boxFillColor = QColor::fromRgb(200, 200, 255);
     }
-
-protected:
-    void applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes) override;
-    bool createSubItemValueImpl(QtnPropertyDelegateDrawContext& context, QtnPropertyDelegateSubItem& subItemValue) override;
-
-private:
-    void draw(QtnPropertyDelegateDrawContext& context, const QtnPropertyDelegateSubItem& item);
-    bool event(QtnPropertyDelegateEventContext& context, const QtnPropertyDelegateSubItem& item);
-
-    QColor m_boxFillColor;
 };
 
 #endif // PROPERTY_DELEGATE_FLOAT_H
