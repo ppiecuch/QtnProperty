@@ -18,6 +18,7 @@
 #define PROPERTY_DELEGATE_FLOAT_H
 
 #include "../PropertyDelegate.h"
+#include "../PropertyDelegateSlideBox.h"
 
 class QtnPropertyFloatBase;
 

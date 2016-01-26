@@ -48,12 +48,12 @@ protected:
 protected:
     void draw(QtnPropertyDelegateDrawContext& context, const QtnPropertyDelegateSubItem& item)
 	{
-	    float valueInterval = owner().maxValue() - owner().minValue();
+	    float valueInterval = this->owner().maxValue() - this->owner().minValue();
 	    if (valueInterval <= 0)
 	        return;
 	
-	    float value = (item.state() == QtnSubItemStatePushed) ? m_dragValue : owner().value();
-	    float valuePart = (value - owner().minValue())/valueInterval;
+	    float value = (item.state() == QtnSubItemStatePushed) ? m_dragValue : this->owner().value();
+	    float valuePart = (value - this->owner().minValue())/valueInterval;
 	
 	    auto boxRect = item.rect;
 	    boxRect.adjust(-1, 1, 0, -1);
@@ -80,11 +80,10 @@ protected:
 	    painter.restore();
 	
 	    boxRect.adjust(context.widget->valueLeftMargin(), 0, 0, 0);
-	    auto strValue = QString::number(owner().value());
-	    drawValueText(strValue, painter, boxRect, state(context.isActive), nullptr);
+	    auto strValue = QString::number(this->owner().value());
+	    this->drawValueText(strValue, painter, boxRect, this->state(context.isActive, item.state()), nullptr);
 	}
     bool event(QtnPropertyDelegateEventContext& context, const QtnPropertyDelegateSubItem& item)
-bool QtnPropertyDelegateSlideBox::event(QtnPropertyDelegateEventContext& context, const QtnPropertyDelegateSubItem& item)
 	{
 	    switch (context.eventType())
 	    {
@@ -93,9 +92,9 @@ bool QtnPropertyDelegateSlideBox::event(QtnPropertyDelegateEventContext& context
 	        int key = context.eventAs<QKeyEvent>()->key();
 	
 	        if ((key == Qt::Key_Plus) || (key == Qt::Key_Equal))
-	            owner().incrementValue(1);
+	            this->owner().incrementValue(1);
 	        else if ((key == Qt::Key_Minus) || (key == Qt::Key_Underscore))
-	            owner().incrementValue(-1);
+	            this->owner().incrementValue(-1);
 	        else
 	            return false;
 	
@@ -105,7 +104,7 @@ bool QtnPropertyDelegateSlideBox::event(QtnPropertyDelegateEventContext& context
 	    case QEvent::Wheel:
 	    {
 	        int steps = context.eventAs<QWheelEvent>()->angleDelta().y()/120;
-	        owner().incrementValue(steps);
+	        this->owner().incrementValue(steps);
 	        return true;
 	    } break;
 	
@@ -123,7 +122,7 @@ bool QtnPropertyDelegateSlideBox::event(QtnPropertyDelegateEventContext& context
 	    case QtnPropertyDelegateSubItem::SubItemReleaseMouse:
 	    {
 	        //updateDragValue(context.eventAs<QMouseEvent>()->x(), item.rect);
-	        owner().setValue(m_dragValue);
+	        this->owner().setValue(m_dragValue);
 	        return true;
 	    } break;
 	
@@ -139,7 +138,7 @@ bool QtnPropertyDelegateSlideBox::event(QtnPropertyDelegateEventContext& context
 	    else if (valuePart > 1.f)
 	        valuePart = 1.f;
 	
-	    m_dragValue = owner().minValue() + valuePart * (owner().maxValue() - owner().minValue());
+	    m_dragValue = this->owner().minValue() + valuePart * (this->owner().maxValue() - this->owner().minValue());
 	}
 
     QColor m_boxFillColor;

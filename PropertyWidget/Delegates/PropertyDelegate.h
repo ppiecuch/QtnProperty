@@ -158,33 +158,6 @@ private:
     QList<QSharedPointer<QtnPropertyBase>> m_subProperties;
 };
 
-template <typename PropertyClass, typename DelegateClass = QtnPropertyDelegateWithValueEditor>
-class QTN_PW_EXPORT QtnPropertyDelegateSlideBox: public QtnPropertyDelegateTyped<PropertyClass, DelegateClass>
-{
-    Q_DISABLE_COPY(QtnPropertyDelegateSlideBox)
-
-public:
-    QtnPropertyDelegateSlideBox(PropertyClass& owner)
-        : QtnPropertyDelegateTyped<PropertyClass, DelegateClass>(owner)
-    {
-        m_boxFillColor = QColor::fromRgb(200, 200, 255);
-        m_dragValue = 0;
-    }
-
-protected:
-    void applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes) override;
-    bool createSubItemValueImpl(QtnPropertyDelegateDrawContext& context, QtnPropertyDelegateSubItem& subItemValue) override;
-
-protected:
-    void draw(QtnPropertyDelegateDrawContext& context, const QtnPropertyDelegateSubItem& item);
-    bool event(QtnPropertyDelegateEventContext& context, const QtnPropertyDelegateSubItem& item);
-    void updateDragValue(int x, const QRect& rect);
-
-    QColor m_boxFillColor;
-    float m_dragValue;
-};
-
-
 class QTN_PW_EXPORT QtnInplaceInfo
 {
 public:

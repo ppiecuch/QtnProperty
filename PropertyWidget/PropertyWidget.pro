@@ -47,6 +47,7 @@ HEADERS += PropertyWidgetAPI.h \
     Delegates/PropertyDelegatePropertySet.h \
     Delegates/PropertyDelegateAux.h \
     Delegates/PropertyDelegateFactory.h \
+    Delegates/PropertyDelegateSlideBox.h \
     Delegates/Core/PropertyDelegateBool.h \
     Delegates/Core/PropertyDelegateInt.h \
     Delegates/Core/PropertyDelegateUInt.h \
