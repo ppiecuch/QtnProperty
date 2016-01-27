@@ -31,7 +31,7 @@ void regFloatDelegates()
 
     QtnPropertyDelegateFactory::staticInstance()
         .registerDelegate(&QtnPropertyFloatBase::staticMetaObject
-                                , &qtnCreateDelegate<QtnPropertyDelegateFloatSlideBox, QtnPropertyFloatBase>
+                                , &qtnCreateDelegate<QtnPropertyDelegateSlideBoxTyped<QtnPropertyFloatBase>, QtnPropertyFloatBase>
                                 , "SliderBox");
 }
 
@@ -86,3 +86,4 @@ bool QtnPropertyDelegateFloat::propertyValueToStrImpl(QString& strValue) const
     strValue = QString::number(owner().value());
     return true;
 }
+

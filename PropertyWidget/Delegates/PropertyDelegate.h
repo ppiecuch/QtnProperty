@@ -40,7 +40,7 @@ public:
     // tune up with attributes
     void applyAttributes(const QtnPropertyDelegateAttributes& attributes);
     // create GUI sub elements to present property on PropertyView
-    void createSubItems(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems);
+    void createSubItems(QtnDrawContext& context, QList<QtnSubItem>& subItems);
 
 protected:
     QtnPropertyDelegate() {}
@@ -52,10 +52,10 @@ protected:
 
     virtual void applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes) { Q_UNUSED(attributes); }
 
-    virtual void createSubItemsImpl(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems) = 0;
+    virtual void createSubItemsImpl(QtnDrawContext& context, QList<QtnSubItem>& subItems) = 0;
 
     // helper functions
-    QStyle::State state(bool isActive, QtnPropertyDelegateSubItemState subState) const;
+    QStyle::State state(bool isActive, QtnSubItemState subState) const;
     static void drawValueText(const QString& text, QStylePainter& painter, const QRect& rect, QStyle::State state, bool* needTooltip = nullptr);
 };
 
@@ -66,17 +66,17 @@ class QTN_PW_EXPORT QtnPropertyDelegateWithValue: public QtnPropertyDelegate
 protected:
     QtnPropertyDelegateWithValue() {}
 
-    void createSubItemsImpl(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems) override;
+    void createSubItemsImpl(QtnDrawContext& context, QList<QtnSubItem>& subItems) override;
 
     // override to define value part of property item
-    virtual bool createSubItemValueImpl(QtnPropertyDelegateDrawContext& context, QtnPropertyDelegateSubItem& subItemValue) = 0;
+    virtual bool createSubItemValueImpl(QtnDrawContext& context, QtnSubItem& subItemValue) = 0;
 
     // sub-items functions
-    void addSubItemBackground(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems);
-    void addSubItemSelection(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems);
-    void addSubItemBranchNode(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems);
-    void addSubItemName(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems);
-    void addSubItemValue(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems);
+    void addSubItemBackground(QtnDrawContext& context, QList<QtnSubItem>& subItems);
+    void addSubItemSelection(QtnDrawContext& context, QList<QtnSubItem>& subItems);
+    void addSubItemBranchNode(QtnDrawContext& context, QList<QtnSubItem>& subItems);
+    void addSubItemName(QtnDrawContext& context, QList<QtnSubItem>& subItems);
+    void addSubItemValue(QtnDrawContext& context, QList<QtnSubItem>& subItems);
 };
 
 class QTN_PW_EXPORT QtnPropertyDelegateWithValueEditor: public QtnPropertyDelegateWithValue
@@ -86,7 +86,7 @@ class QTN_PW_EXPORT QtnPropertyDelegateWithValueEditor: public QtnPropertyDelega
 protected:
     QtnPropertyDelegateWithValueEditor() {}
 
-    bool createSubItemValueImpl(QtnPropertyDelegateDrawContext& context, QtnPropertyDelegateSubItem& subItemValue) override;
+    bool createSubItemValueImpl(QtnDrawContext& context, QtnSubItem& subItemValue) override;
 
     // override to draw property value or override propertyValueToStrImpl to draw value as text
     virtual void drawValueImpl(QStylePainter& painter, const QRect& rect, const QStyle::State& state, bool* needTooltip = nullptr) const;
@@ -157,6 +157,79 @@ protected:
 private:
     QList<QSharedPointer<QtnPropertyBase>> m_subProperties;
 };
+
+
+class QTN_PW_EXPORT QtnPropertyDelegateSlideBox: public QtnPropertyDelegateWithValue
+{
+    Q_DISABLE_COPY(QtnPropertyDelegateSlideBox)
+
+protected:
+    QtnPropertyDelegateSlideBox();
+
+    void applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes) override;
+    bool createSubItemValueImpl(QtnDrawContext& context, QtnSubItem& subItemValue) override;
+
+    virtual void draw(QtnDrawContext& context, const QtnSubItem& item);
+    virtual bool event(QtnEventContext& context, const QtnSubItem& item);
+
+    float dragValuePart() const { return m_dragValuePart; }
+
+    virtual float propertyValuePart() const = 0;
+    virtual QString valuePartToStr(float valuePart) const = 0;
+    virtual void incrementPropertyValue(int steps) = 0;
+    virtual void setPropertyValuePart(float valuePart) = 0;
+
+    QColor m_boxFillColor;
+    bool m_liveUpdate;
+
+private:
+    void updateDragValuePart(int x, const QRect& rect);
+
+    float m_dragValuePart;
+    QCursor m_oldCursor;
+};
+
+template <typename PropertyClass>
+class QtnPropertyDelegateSlideBoxTyped: public QtnPropertyDelegateTyped<PropertyClass, QtnPropertyDelegateSlideBox>
+{
+    Q_DISABLE_COPY(QtnPropertyDelegateSlideBoxTyped)
+
+public:
+    QtnPropertyDelegateSlideBoxTyped(PropertyClass& owner)
+        : QtnPropertyDelegateTyped<PropertyClass, QtnPropertyDelegateSlideBox>(owner)
+    {}
+
+protected:
+    typedef typename PropertyClass::ValueType ValueType;
+
+    float propertyValuePart() const override
+    {
+        ValueType valueInterval = this->owner().maxValue() - this->owner().minValue();
+        if (valueInterval <= 0)
+            return -1.f;
+
+        return float(this->owner().value() - this->owner().minValue())/valueInterval;
+    }
+    QString valuePartToStr(float valuePart) const
+    {
+        return QString::number(partToValue(valuePart));
+    }
+    void incrementPropertyValue(int steps)
+    {
+        this->owner().incrementValue(steps);
+    }
+
+    void setPropertyValuePart(float valuePart)
+    {
+        this->owner().setValue(partToValue(valuePart));
+    }
+
+    ValueType partToValue(float valuePart) const
+    {
+        return this->owner().minValue() + ValueType(valuePart * (this->owner().maxValue() - this->owner().minValue()));
+    }
+};
+
 
 class QTN_PW_EXPORT QtnInplaceInfo
 {

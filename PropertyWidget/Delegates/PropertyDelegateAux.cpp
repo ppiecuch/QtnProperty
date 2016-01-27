@@ -18,14 +18,14 @@
 #include "PropertyView.h"
 #include <QMouseEvent>
 
-QtnPropertyDelegateSubItem::QtnPropertyDelegateSubItem(bool trackState)
+QtnSubItem::QtnSubItem(bool trackState)
     : m_trackState(trackState),
       m_activeCount(0),
       m_state(QtnSubItemStateNone)
 {
 }
 
-bool QtnPropertyDelegateSubItem::activate(QtnPropertyView *widget)
+bool QtnSubItem::activate(QtnPropertyView *widget, QPoint mousePos)
 {
     if (!m_trackState)
         return false;
@@ -40,13 +40,13 @@ bool QtnPropertyDelegateSubItem::activate(QtnPropertyView *widget)
     {
         m_state = QtnSubItemStateUnderCursor;
         widget->viewport()->update();
-        selfEvent(SubItemActivated, widget);
+        selfEvent(QtnSubItemEvent::Activated, widget, mousePos);
      }
 
     return true;
 }
 
-bool QtnPropertyDelegateSubItem::deactivate(QtnPropertyView *widget)
+bool QtnSubItem::deactivate(QtnPropertyView *widget, QPoint mousePos)
 {
     if (!m_trackState)
         return false;
@@ -61,43 +61,43 @@ bool QtnPropertyDelegateSubItem::deactivate(QtnPropertyView *widget)
     {
         m_state = QtnSubItemStateNone;
         widget->viewport()->update();
-        selfEvent(SubItemDeactivated, widget);
+        selfEvent(QtnSubItemEvent::Deactivated, widget, mousePos);
     }
 
     return true;
 }
 
-bool QtnPropertyDelegateSubItem::grabMouse(QtnPropertyView* widget)
+bool QtnSubItem::grabMouse(QtnPropertyView* widget, QPoint mousePos)
 {
     Q_ASSERT(m_activeCount > 0);
     Q_ASSERT(m_state == QtnSubItemStateUnderCursor);
 
     m_state = QtnSubItemStatePushed;
     widget->viewport()->update();
-    selfEvent(SubItemGrabMouse, widget);
+    selfEvent(QtnSubItemEvent::PressMouse, widget, mousePos);
 
     return true;
 }
 
-bool QtnPropertyDelegateSubItem::releaseMouse(QtnPropertyView* widget)
+bool QtnSubItem::releaseMouse(QtnPropertyView* widget, QPoint mousePos)
 {
     Q_ASSERT(m_activeCount > 0);
     Q_ASSERT(m_state == QtnSubItemStatePushed);
 
     m_state = QtnSubItemStateUnderCursor;
     widget->viewport()->update();
-    selfEvent(SubItemReleaseMouse, widget);
+    selfEvent(QtnSubItemEvent::ReleaseMouse, widget, mousePos);
 
     return true;
 }
 
-void QtnPropertyDelegateSubItem::draw(QtnPropertyDelegateDrawContext& context) const
+void QtnSubItem::draw(QtnDrawContext& context) const
 {
     if (drawHandler)
         drawHandler(context, *this);
 }
 
-bool QtnPropertyDelegateSubItem::event(QtnPropertyDelegateEventContext& context)
+bool QtnSubItem::event(QtnEventContext& context)
 {
     if (m_trackState)
     {
@@ -106,15 +106,17 @@ bool QtnPropertyDelegateSubItem::event(QtnPropertyDelegateEventContext& context)
         case QEvent::MouseButtonPress:
         case QEvent::MouseButtonDblClick:
         {
-            if (context.eventAs<QMouseEvent>()->button() == Qt::LeftButton)
-                context.grabMouse(this);
+            auto event = context.eventAs<QMouseEvent>();
+            if (event->button() == Qt::LeftButton)
+                context.grabMouse(this, event->pos());
         } break;
 
         case QEvent::MouseButtonRelease:
         {
-            if ((context.eventAs<QMouseEvent>()->button() == Qt::LeftButton)
+            auto event = context.eventAs<QMouseEvent>();
+            if ((event->button() == Qt::LeftButton)
                     && (m_state == QtnSubItemStatePushed))
-                context.releaseMouse(this);
+                context.releaseMouse(this, event->pos());
         } break;
 
         default:
@@ -128,31 +130,31 @@ bool QtnPropertyDelegateSubItem::event(QtnPropertyDelegateEventContext& context)
     return false;
 }
 
-bool QtnPropertyDelegateSubItem::selfEvent(int type, QtnPropertyView* widget)
+bool QtnSubItem::selfEvent(QtnSubItemEvent::Type type, QtnPropertyView* widget, QPoint mousePos)
 {
-    QEvent event_((QEvent::Type)type);
-    QtnPropertyDelegateEventContext context{&event_, widget};
+    QtnSubItemEvent event_(type, mousePos);
+    QtnEventContext context{&event_, widget};
     return event(context);
 }
 
-QStyle* QtnPropertyDelegateDrawContext::style() const
+QStyle* QtnDrawContext::style() const
 {
     return widget->style();
 }
 
-void QtnPropertyDelegateDrawContext::initStyleOption(QStyleOption& option) const
+void QtnDrawContext::initStyleOption(QStyleOption& option) const
 {
     option.initFrom(widget);
     // State_MouseOver should be set explicitly
     option.state &= ~QStyle::State_MouseOver;
 }
 
-const QPalette& QtnPropertyDelegateDrawContext::palette() const
+const QPalette& QtnDrawContext::palette() const
 {
     return widget->palette();
 }
 
-QPalette::ColorGroup QtnPropertyDelegateDrawContext::colorGroup() const
+QPalette::ColorGroup QtnDrawContext::colorGroup() const
 {
     if (!widget->isEnabled())
         return QPalette::Disabled;
@@ -162,13 +164,23 @@ QPalette::ColorGroup QtnPropertyDelegateDrawContext::colorGroup() const
         return QPalette::Active;
 }
 
-bool QtnPropertyDelegateEventContext::grabMouse(QtnPropertyDelegateSubItem* subItem)
+void QtnEventContext::updateWidget()
 {
-    return widget->grabMouseForSubItem(subItem);
+    widget->viewport()->update();
 }
 
-bool QtnPropertyDelegateEventContext::releaseMouse(QtnPropertyDelegateSubItem* subItem)
+bool QtnEventContext::grabMouse(QtnSubItem* subItem, QPoint mousePos)
 {
-    return widget->releaseMouseForSubItem(subItem);
+    return widget->grabMouseForSubItem(subItem, mousePos);
 }
+
+bool QtnEventContext::releaseMouse(QtnSubItem* subItem, QPoint mousePos)
+{
+    return widget->releaseMouseForSubItem(subItem, mousePos);
+}
+
+QtnSubItemEvent::QtnSubItemEvent(Type type, QPoint mousePos)
+    : QEvent((QEvent::Type)type),
+      m_mousePos(mousePos)
+{}
 

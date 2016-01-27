@@ -55,12 +55,12 @@ void QtnPropertyDelegate::applyAttributes(const QtnPropertyDelegateAttributes& a
     applyAttributesImpl(attributes);
 }
 
-void QtnPropertyDelegate::createSubItems(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems)
+void QtnPropertyDelegate::createSubItems(QtnDrawContext& context, QList<QtnSubItem>& subItems)
 {
     createSubItemsImpl(context, subItems);
 }
 
-QStyle::State QtnPropertyDelegate::state(bool isActive, QtnPropertyDelegateSubItemState subState) const
+QStyle::State QtnPropertyDelegate::state(bool isActive, QtnSubItemState subState) const
 {
     QStyle::State state = QStyle::State_Active;
     if (propertyImmutable()->isEditableByUser())
@@ -79,7 +79,7 @@ QStyle::State QtnPropertyDelegate::state(bool isActive, QtnPropertyDelegateSubIt
     return state;
 }
 
-void QtnPropertyDelegateWithValue::createSubItemsImpl(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems)
+void QtnPropertyDelegateWithValue::createSubItemsImpl(QtnDrawContext& context, QList<QtnSubItem>& subItems)
 {
     addSubItemBackground(context, subItems);
     addSubItemSelection(context, subItems);
@@ -88,15 +88,15 @@ void QtnPropertyDelegateWithValue::createSubItemsImpl(QtnPropertyDelegateDrawCon
     addSubItemValue(context, subItems);
 }
 
-void QtnPropertyDelegateWithValue::addSubItemBackground(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems)
+void QtnPropertyDelegateWithValue::addSubItemBackground(QtnDrawContext& context, QList<QtnSubItem>& subItems)
 {
-    QtnPropertyDelegateSubItem bgItem;
+    QtnSubItem bgItem;
     bgItem.rect = context.rect;
 
     if (!bgItem.rect.isValid())
         return;
 
-    bgItem.drawHandler = [this](QtnPropertyDelegateDrawContext& context, const QtnPropertyDelegateSubItem& item) {
+    bgItem.drawHandler = [this](QtnDrawContext& context, const QtnSubItem& item) {
 
         auto& painter = *context.painter;
         const auto& rect = item.rect;
@@ -116,16 +116,16 @@ void QtnPropertyDelegateWithValue::addSubItemBackground(QtnPropertyDelegateDrawC
     subItems.append(bgItem);
 }
 
-void QtnPropertyDelegateWithValue::addSubItemSelection(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems)
+void QtnPropertyDelegateWithValue::addSubItemSelection(QtnDrawContext& context, QList<QtnSubItem>& subItems)
 {
-    QtnPropertyDelegateSubItem selItem;
+    QtnSubItem selItem;
     selItem.rect = context.rect;
     selItem.rect.setRight(context.splitPos);
 
     if (!selItem.rect.isValid())
         return;
 
-    selItem.drawHandler = [this](QtnPropertyDelegateDrawContext& context, const QtnPropertyDelegateSubItem& item) {
+    selItem.drawHandler = [this](QtnDrawContext& context, const QtnSubItem& item) {
         // highlight background if active property
         if (context.isActive)
             context.painter->fillRect(item.rect, context.widget->palette().color(QPalette::Highlight));
@@ -134,12 +134,12 @@ void QtnPropertyDelegateWithValue::addSubItemSelection(QtnPropertyDelegateDrawCo
     subItems.append(selItem);
 }
 
-void QtnPropertyDelegateWithValue::addSubItemBranchNode(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems)
+void QtnPropertyDelegateWithValue::addSubItemBranchNode(QtnDrawContext& context, QList<QtnSubItem>& subItems)
 {
     if (!context.hasChildren)
         return;
 
-    QtnPropertyDelegateSubItem brItem(true);
+    QtnSubItem brItem(true);
     brItem.rect = context.rect.marginsRemoved(context.margins);
     brItem.rect.setWidth(brItem.rect.height());
     context.margins.setLeft(context.margins.left() + brItem.rect.height());
@@ -147,7 +147,7 @@ void QtnPropertyDelegateWithValue::addSubItemBranchNode(QtnPropertyDelegateDrawC
     if (!brItem.rect.isValid())
         return;
 
-    brItem.drawHandler = [this](QtnPropertyDelegateDrawContext& context, const QtnPropertyDelegateSubItem& item) {
+    brItem.drawHandler = [this](QtnDrawContext& context, const QtnSubItem& item) {
         auto& painter = *context.painter;
         QRectF branchRect = item.rect;
         qreal side = branchRect.height() / 3.5f;
@@ -191,7 +191,7 @@ void QtnPropertyDelegateWithValue::addSubItemBranchNode(QtnPropertyDelegateDrawC
         painter.restore();
     };
 
-    brItem.eventHandler = [this](QtnPropertyDelegateEventContext& context, const QtnPropertyDelegateSubItem&) -> bool {
+    brItem.eventHandler = [this](QtnEventContext& context, const QtnSubItem&) -> bool {
         if ((context.eventType() == QEvent::MouseButtonPress) || (context.eventType() == QEvent::MouseButtonDblClick))
         {
             property()->switchStateAuto(QtnPropertyStateCollapsed);
@@ -204,16 +204,16 @@ void QtnPropertyDelegateWithValue::addSubItemBranchNode(QtnPropertyDelegateDrawC
     subItems.append(brItem);
 }
 
-void QtnPropertyDelegateWithValue::addSubItemName(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems)
+void QtnPropertyDelegateWithValue::addSubItemName(QtnDrawContext& context, QList<QtnSubItem>& subItems)
 {
-    QtnPropertyDelegateSubItem nameItem;
+    QtnSubItem nameItem;
     nameItem.rect = context.rect.marginsRemoved(context.margins);
     nameItem.rect.setRight(context.splitPos);
 
     if (!nameItem.rect.isValid())
         return;
 
-    nameItem.drawHandler = [this](QtnPropertyDelegateDrawContext& context, const QtnPropertyDelegateSubItem& item) {
+    nameItem.drawHandler = [this](QtnDrawContext& context, const QtnSubItem& item) {
         context.painter->save();
 
         QPalette::ColorGroup cg = property()->isEditableByUser() ? QPalette::Active : QPalette::Disabled;
@@ -228,9 +228,9 @@ void QtnPropertyDelegateWithValue::addSubItemName(QtnPropertyDelegateDrawContext
     subItems.append(nameItem);
 }
 
-void QtnPropertyDelegateWithValue::addSubItemValue(QtnPropertyDelegateDrawContext& context, QList<QtnPropertyDelegateSubItem>& subItems)
+void QtnPropertyDelegateWithValue::addSubItemValue(QtnDrawContext& context, QList<QtnSubItem>& subItems)
 {
-    QtnPropertyDelegateSubItem valueItem;
+    QtnSubItem valueItem;
     valueItem.rect = context.rect.marginsRemoved(context.margins);
     valueItem.rect.setLeft(context.splitPos + context.widget->valueLeftMargin());
 
@@ -238,14 +238,14 @@ void QtnPropertyDelegateWithValue::addSubItemValue(QtnPropertyDelegateDrawContex
         subItems.append(valueItem);
 }
 
-bool QtnPropertyDelegateWithValueEditor::createSubItemValueImpl(QtnPropertyDelegateDrawContext&, QtnPropertyDelegateSubItem& subItemValue)
+bool QtnPropertyDelegateWithValueEditor::createSubItemValueImpl(QtnDrawContext&, QtnSubItem& subItemValue)
 {
-    subItemValue.drawHandler = [this](QtnPropertyDelegateDrawContext& context, const QtnPropertyDelegateSubItem& item) {
+    subItemValue.drawHandler = [this](QtnDrawContext& context, const QtnSubItem& item) {
         // draw property value
        drawValueImpl(*context.painter, item.rect, state(context.isActive, item.state()), nullptr);
     };
 
-    subItemValue.eventHandler = [this](QtnPropertyDelegateEventContext& context, const QtnPropertyDelegateSubItem& item) -> bool {
+    subItemValue.eventHandler = [this](QtnEventContext& context, const QtnSubItem& item) -> bool {
         bool doEdit = false;
         switch (context.eventType())
         {
@@ -329,4 +329,130 @@ QWidget* QtnPropertyDelegateWithValueEditor::createValueEditorLineEdit(QWidget* 
     }
 
     return lineEdit;
+}
+
+
+QtnPropertyDelegateSlideBox::QtnPropertyDelegateSlideBox()
+    : m_boxFillColor(QColor::fromRgb(200, 200, 255)),
+      m_dragValuePart(0),
+      m_liveUpdate(false)
+{
+}
+
+void QtnPropertyDelegateSlideBox::applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes)
+{
+    qtnGetAttribute(attributes, "fillColor", m_boxFillColor);
+    qtnGetAttribute(attributes, "liveUpdate", m_liveUpdate);
+}
+
+bool QtnPropertyDelegateSlideBox::createSubItemValueImpl(QtnDrawContext&, QtnSubItem& subItemValue)
+{
+    subItemValue.trackState();
+    subItemValue.drawHandler = qtnMemFn(this, &QtnPropertyDelegateSlideBox::draw);
+    subItemValue.eventHandler = qtnMemFn(this, &QtnPropertyDelegateSlideBox::event);
+    return true;
+}
+
+void QtnPropertyDelegateSlideBox::draw(QtnDrawContext& context, const QtnSubItem& item)
+{
+    float valuePart = (item.state() == QtnSubItemStatePushed) ? dragValuePart() : propertyValuePart();
+    if (valuePart < 0)
+        return;
+
+    auto boxBorderColor = (item.state() == QtnSubItemStateNone) ? m_boxFillColor : m_boxFillColor.darker(150);
+
+    auto boxRect = item.rect;
+    boxRect.adjust(2, 2, -2, -2);
+
+    auto valueRect = boxRect;
+    valueRect.setWidth(int(valuePart * valueRect.width()));
+
+    auto& painter = *context.painter;
+
+    painter.save();
+
+    painter.fillRect(valueRect, m_boxFillColor);
+
+    painter.setPen(boxBorderColor);
+    painter.drawRect(valueRect);
+    painter.drawRect(boxRect);
+
+    painter.restore();
+
+    boxRect.adjust(context.widget->valueLeftMargin(), 0, 0, 0);
+    drawValueText(valuePartToStr(valuePart), painter, boxRect, state(context.isActive, item.state()), nullptr);
+}
+
+bool QtnPropertyDelegateSlideBox::event(QtnEventContext& context, const QtnSubItem& item)
+{
+    switch (context.eventType())
+    {
+    case QEvent::KeyPress:
+    {
+        int key = context.eventAs<QKeyEvent>()->key();
+
+        if ((key == Qt::Key_Plus) || (key == Qt::Key_Equal))
+            incrementPropertyValue(1);
+        else if ((key == Qt::Key_Minus) || (key == Qt::Key_Underscore))
+            incrementPropertyValue(-1);
+        else
+            return false;
+
+        return true;
+    } break;
+
+    case QEvent::Wheel:
+    {
+        int steps = context.eventAs<QWheelEvent>()->angleDelta().y()/120;
+        incrementPropertyValue(steps);
+        return true;
+    } break;
+
+    case QtnSubItemEvent::Activated:
+    {
+        m_oldCursor = context.widget->cursor();
+        return true;
+    } break;
+
+    case QtnSubItemEvent::PressMouse:
+    {
+        updateDragValuePart(context.eventAs<QtnSubItemEvent>()->x(), item.rect);
+        context.widget->setCursor(Qt::SplitHCursor);
+        context.updateWidget();
+        return true;
+    } break;
+
+    case QEvent::MouseMove:
+    {
+        if (item.state() == QtnSubItemStatePushed)
+        {
+            updateDragValuePart(context.eventAs<QMouseEvent>()->x(), item.rect);
+            if (m_liveUpdate)
+                setPropertyValuePart(m_dragValuePart);
+            else
+                context.updateWidget();
+        }
+        return true;
+    } break;
+
+    case QtnSubItemEvent::ReleaseMouse:
+    {
+        updateDragValuePart(context.eventAs<QtnSubItemEvent>()->x(), item.rect);
+        context.widget->setCursor(m_oldCursor);
+        setPropertyValuePart(m_dragValuePart);
+        return true;
+    } break;
+
+    default:
+        return false;
+    }
+}
+
+void QtnPropertyDelegateSlideBox::updateDragValuePart(int x, const QRect& rect)
+{
+    m_dragValuePart = float(x - rect.left()) / rect.width();
+    if (m_dragValuePart < 0)
+        m_dragValuePart = 0;
+    else if (m_dragValuePart > 1.f)
+        m_dragValuePart = 1.f;
 }

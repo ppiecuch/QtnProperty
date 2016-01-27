@@ -18,7 +18,6 @@
 #define PROPERTY_DELEGATE_FLOAT_H
 
 #include "../PropertyDelegate.h"
-#include "../PropertyDelegateSlideBox.h"
 
 class QtnPropertyFloatBase;
 
@@ -35,17 +34,6 @@ public:
 protected:
     QWidget* createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo = nullptr) override;
     bool propertyValueToStrImpl(QString& strValue) const override;
-};
-
-class QTN_PW_EXPORT QtnPropertyDelegateFloatSlideBox: public QtnPropertyDelegateSlideBox<QtnPropertyFloatBase, QtnPropertyDelegateWithValue>
-{
-    Q_DISABLE_COPY(QtnPropertyDelegateFloatSlideBox)
-
-public:
-    QtnPropertyDelegateFloatSlideBox(QtnPropertyFloatBase& owner)
-        : QtnPropertyDelegateSlideBox<QtnPropertyFloatBase, QtnPropertyDelegateWithValue>(owner)
-    {
-    }
 };
 
 #endif // PROPERTY_DELEGATE_FLOAT_H
