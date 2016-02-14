@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2012-1015 Alex Zhondin <qtinuum.team@gmail.com>
+   Copyright (c) 2012-2016 Alex Zhondin <lexxmark.dev@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
 #include "../../../Core/Core/PropertyUInt.h"
 #include "../../../Core/GUI/PropertyQColor.h"
 #include "../PropertyDelegateFactory.h"
-#include "../PropertyEditorHandler.h"
-#include "../PropertyEditorAux.h"
+#include "../Utils/PropertyEditorHandler.h"
+#include "../Utils/PropertyEditorAux.h"
 
 #include <QColorDialog>
 
@@ -94,7 +94,6 @@ void QtnPropertyDelegateQColor::applyAttributesImpl(const QtnPropertyDelegateAtt
             delegateInfo.attributes["fillColor"] = QColor::fromRgb(255, 100, 100);
             subProperty->setDelegate(delegateInfo);
             addSubProperty(subProperty);
-
         }
 
         {
@@ -102,7 +101,6 @@ void QtnPropertyDelegateQColor::applyAttributesImpl(const QtnPropertyDelegateAtt
             delegateInfo.attributes["fillColor"] = QColor::fromRgb(100, 255, 100);
             subProperty->setDelegate(delegateInfo);
             addSubProperty(subProperty);
-
         }
 
         {
@@ -110,7 +108,6 @@ void QtnPropertyDelegateQColor::applyAttributesImpl(const QtnPropertyDelegateAtt
             delegateInfo.attributes["fillColor"] = QColor::fromRgb(100, 100, 255);
             subProperty->setDelegate(delegateInfo);
             addSubProperty(subProperty);
-
         }
     }
 }

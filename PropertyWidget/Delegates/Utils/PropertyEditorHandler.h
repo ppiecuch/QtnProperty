@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2012-1015 Alex Zhondin <qtinuum.team@gmail.com>
+   Copyright (c) 2012-2016 Alex Zhondin <lexxmark.dev@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 #ifndef PROPERTY_EDITOR_HANDLER_H
 #define PROPERTY_EDITOR_HANDLER_H
 
-#include "../PropertyWidgetAPI.h"
-#include "../../Core/Property.h"
+#include "../../PropertyWidgetAPI.h"
+#include "../../../Core/Property.h"
 #include <QWidget>
 
 class QTN_PW_EXPORT QtnPropertyEditorHandlerBase: public QObject

@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2012-1015 Alex Zhondin <qtinuum.team@gmail.com>
+   Copyright (c) 2012-2016 Alex Zhondin <lexxmark.dev@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 #include "../PropertyWidgetAPI.h"
 
 #include <functional>
+#include <QStyleOption>
 #include <QStylePainter>
 #include <QEvent>
 
@@ -63,9 +64,14 @@ struct QTN_PW_EXPORT QtnSubItem
 
     std::function<void(QtnDrawContext&, const QtnSubItem&)> drawHandler;
     std::function<bool(QtnEventContext&, const QtnSubItem&)> eventHandler;
+    std::function<QString(QtnEventContext&, const QtnSubItem&)> tooltipHandler;
 
     QtnSubItemState state() const { return m_state; }
     void trackState() { m_trackState = true; }
+
+    void setTextAsTooltip(const QString& text);
+    void setPropertyNameAsTooltip(const QtnPropertyBase& property);
+    void setPropertyDescriptionAsTooltip(const QtnPropertyBase& property);
 
 private:
     bool activate(QtnPropertyView* widget, QPoint mousePos);
@@ -110,7 +116,7 @@ public:
     QEvent* event;
     QtnPropertyView* widget;
 
-    QEvent::Type eventType() const { return event->type(); }
+    int eventType() const { return static_cast<int>(event->type()); }
     template <class EventT>
     EventT* eventAs() { return static_cast<EventT*>(event); }
 
@@ -122,5 +128,9 @@ private:
 
     friend struct QtnSubItem;
 };
+
+QTN_PW_EXPORT QString qtnElidedText(const QPainter& painter, const QString& text, const QRect& rect, bool* elided = 0);
+QTN_PW_EXPORT void qtnDrawValueText(const QString& text, QStylePainter& painter, const QRect& rect, QStyle::State state, bool* needTooltip = nullptr);
+
 
 #endif // QTN_PROPERTY_DELEGATE_AUX_H

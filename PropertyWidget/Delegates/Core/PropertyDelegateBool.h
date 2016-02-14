@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2012-1015 Alex Zhondin <qtinuum.team@gmail.com>
+   Copyright (c) 2012-2016 Alex Zhondin <lexxmark.dev@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 #ifndef PROPERTY_DELEGATE_BOOL_H
 #define PROPERTY_DELEGATE_BOOL_H
 
-#include "../PropertyDelegate.h"
+#include "../Utils/PropertyDelegateMisc.h"
 
 class QtnPropertyBoolBase;
 
@@ -33,8 +33,6 @@ public:
 
 protected:
     bool createSubItemValueImpl(QtnDrawContext& context, QtnSubItem& subItemValue) override;
-//    void drawValueImpl(QStylePainter& painter, const QRect& rect, const QStyle::State& state, bool* needTooltip = nullptr) const override;
-//    QWidget* createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo = nullptr) override;
 };
 
 class QTN_PW_EXPORT QtnPropertyDelegateBoolCombobox: public QtnPropertyDelegateTyped<QtnPropertyBoolBase>

@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2012-1015 Alex Zhondin <qtinuum.team@gmail.com>
+   Copyright (c) 2012-2016 Alex Zhondin <lexxmark.dev@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ QtnProperty* qtnCreateRedProperty(QObject *parent, QtnPropertyQColorBase *proper
     });
     redProperty->setMinValue(0);
     redProperty->setMaxValue(255);
-    QtnPropertyBase::connectMasterState(*propertyColor, *redProperty);
+    QtnPropertyBase::connectMasterSignals(*propertyColor, *redProperty);
 
     return redProperty;
 }
@@ -75,7 +75,7 @@ QtnProperty* qtnCreateGreenProperty(QObject *parent, QtnPropertyQColorBase *prop
     });
     greenProperty->setMinValue(0);
     greenProperty->setMaxValue(255);
-    QtnPropertyBase::connectMasterState(*propertyColor, *greenProperty);
+    QtnPropertyBase::connectMasterSignals(*propertyColor, *greenProperty);
 
     return greenProperty;
 }
@@ -93,7 +93,7 @@ QtnProperty* qtnCreateBlueProperty(QObject *parent, QtnPropertyQColorBase *prope
     });
     blueProperty->setMinValue(0);
     blueProperty->setMaxValue(255);
-    QtnPropertyBase::connectMasterState(*propertyColor, *blueProperty);
+    QtnPropertyBase::connectMasterSignals(*propertyColor, *blueProperty);
 
     return blueProperty;
 }

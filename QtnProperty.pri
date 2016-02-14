@@ -2,6 +2,10 @@ include(Common.pri)
 
 CONFIG += unity_build
 QT += script widgets
+exists("$$PWD/Contrib/Midi") {
+	message("Midi connector enabled.")
+	CONFIG += midi_connector
+}
 
 QTNPROPVERSION = 1.0.0
 
@@ -27,13 +31,12 @@ SOURCES_CORE += PropertyBase.cpp \
     Core/PropertyQSize.cpp \
     Core/PropertyQPoint.cpp \
     GUI/PropertyQColor.cpp \
-    GUI/PropertyQAction.cpp \
+    GUI/PropertyButton.cpp \
     GUI/PropertyQFont.cpp
 
 SOURCES_WIDGET += PropertyWidget.cpp \
     PropertyView.cpp \
     Utils/InplaceEditing.cpp \
-    Utils/AccessibilityProxy.cpp \
     Delegates/PropertyDelegateFactory.cpp \
     Delegates/Core/PropertyDelegateBool.cpp \
     Delegates/Core/PropertyDelegateInt.cpp \
@@ -43,15 +46,20 @@ SOURCES_WIDGET += PropertyWidget.cpp \
     Delegates/Core/PropertyDelegateDouble.cpp \
     Delegates/Core/PropertyDelegateEnum.cpp \
     Delegates/Core/PropertyDelegateQRect.cpp \
-    Delegates/PropertyEditorHandler.cpp \
+    Delegates/Utils/PropertyEditorHandler.cpp \
     Delegates/Core/PropertyDelegateEnumFlags.cpp \
     Delegates/PropertyDelegate.cpp \
-    Delegates/PropertyEditorAux.cpp \
+    Delegates/PropertyDelegateAux.cpp \
+    Delegates/Utils/PropertyDelegatePropertySet.cpp \
+    Delegates/Utils/PropertyDelegateSliderBox.cpp \
+    Delegates/Utils/PropertyDelegateMisc.cpp \
+    Delegates/Utils/PropertyEditorAux.cpp \
     Delegates/Core/PropertyDelegateQSize.cpp \
     Delegates/Core/PropertyDelegateQPoint.cpp \
     Delegates/GUI/PropertyDelegateQFont.cpp \
     Delegates/GUI/PropertyDelegateQColor.cpp \
-    Delegates/GUI/PropertyDelegateQAction.cpp
+    Delegates/GUI/PropertyDelegateButton.cpp \
+    Utils/AccessibilityProxy.cpp
 
 !isEmpty(AB_BUILD) {
 	SOURCES_AB = Contrib/AB/PropertyABColor.cpp Contrib/AB/PropertyDelegateABColor.cpp
@@ -86,14 +94,18 @@ HEADERS += CoreAPI.h\
     Core/PropertyQPoint.h \
     GUI/PropertyButton.h \
     GUI/PropertyQColor.h \
+    GUI/PropertyButton.h \
     GUI/PropertyQFont.h
 
 HEADERS += PropertyWidgetAPI.h \
     PropertyWidget.h \
     PropertyView.h \
     Utils/InplaceEditing.h \
-    Utils/AccessibilityProxy.h \
     Delegates/PropertyDelegate.h \
+    Delegates/Utils/PropertyDelegatePropertySet.h \
+    Delegates/Utils/PropertyDelegateSliderBox.h \
+    Delegates/Utils/PropertyDelegateMisc.h \
+    Delegates/PropertyDelegateAux.h \
     Delegates/PropertyDelegateFactory.h \
     Delegates/Core/PropertyDelegateBool.h \
     Delegates/Core/PropertyDelegateInt.h \
@@ -103,18 +115,19 @@ HEADERS += PropertyWidgetAPI.h \
     Delegates/Core/PropertyDelegateDouble.h \
     Delegates/Core/PropertyDelegateEnum.h \
     Delegates/Core/PropertyDelegateQRect.h \
-    Delegates/PropertyEditorHandler.h \
+    Delegates/Utils/PropertyEditorHandler.h \
     Delegates/Core/PropertyDelegateEnumFlags.h \
-    Delegates/PropertyEditorAux.h \
+    Delegates/Utils/PropertyEditorAux.h \
     Delegates/Core/PropertyDelegateQSize.h \
     Delegates/Core/PropertyDelegateQPoint.h \
-    Delegates/GUI/PropertyDelegateButton.h \
+    Delegates/GUI/PropertyDelegateQFont.h \
     Delegates/GUI/PropertyDelegateQColor.h \
-    Delegates/GUI/PropertyDelegateQFont.h
+    Delegates/GUI/PropertyDelegateButton.h \
+    Utils/AccessibilityProxy.h
 
 HEADERS += \
     $$HEAERS_AB
 
 midi_connector {
-	include(Contrib/Midi/qtMidi.pri)
+	include("Contrib/Midi/qtMidi.pri")
 }

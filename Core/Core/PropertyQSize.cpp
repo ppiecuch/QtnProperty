@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2012-1015 Alex Zhondin <qtinuum.team@gmail.com>
+   Copyright (c) 2012-2016 Alex Zhondin <lexxmark.dev@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ QtnProperty* qtnCreateWidthProperty(QObject *parent, QtnPropertyQSizeBase *prope
         size.setWidth(newWidth);
         propertySize->setValue(size);
     });
-    QtnPropertyBase::connectMasterState(*propertySize, *widthProperty);
+    QtnPropertyBase::connectMasterSignals(*propertySize, *widthProperty);
 
     return widthProperty;
 }
@@ -87,7 +87,7 @@ QtnProperty* qtnCreateHeightProperty(QObject *parent, QtnPropertyQSizeBase *prop
         size.setHeight(newHeight);
         propertySize->setValue(size);
     });
-    QtnPropertyBase::connectMasterState(*propertySize, *heightProperty);
+    QtnPropertyBase::connectMasterSignals(*propertySize, *heightProperty);
 
     return heightProperty;
 }

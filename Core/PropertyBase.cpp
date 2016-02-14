@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2012-1015 Alex Zhondin <qtinuum.team@gmail.com>
+   Copyright (c) 2012-2016 Alex Zhondin <lexxmark.dev@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -467,15 +467,32 @@ void QtnPropertyBase::setDelegateCallback(const std::function<const QtnPropertyD
     m_delegateInfoGetter.reset(new QtnPropertyDelegateInfoGetterCallback(callback));
 }
 
-QMetaObject::Connection QtnPropertyBase::connectMasterState(const QtnPropertyBase& masterProperty, QtnPropertyBase& slaveProperty)
+void QtnPropertyBase::setResetCallback(const std::function<void(QtnPropertyBase&)>& resetCallback)
 {
-    slaveProperty.setStateInherited(masterProperty.state());
-    return QObject::connect(&masterProperty, &QtnPropertyBase::propertyDidChange, &slaveProperty, &QtnPropertyBase::masterPropertyStateDidChange);
+    m_resetCallback = resetCallback;
 }
 
-bool QtnPropertyBase::disconnectMasterState(const QtnPropertyBase& masterProperty, QtnPropertyBase& slaveProperty)
+bool QtnPropertyBase::reset()
 {
-    return QObject::disconnect(&masterProperty, &QtnPropertyBase::propertyDidChange, &slaveProperty, &QtnPropertyBase::masterPropertyStateDidChange);
+    if (!m_resetCallback)
+        return false;
+
+    m_resetCallback(*this);
+    return true;
+}
+
+
+void QtnPropertyBase::connectMasterSignals(const QtnPropertyBase& masterProperty, QtnPropertyBase& slaveProperty)
+{
+    slaveProperty.setStateInherited(masterProperty.state());
+    QObject::connect(&masterProperty, &QtnPropertyBase::propertyWillChange, &slaveProperty, &QtnPropertyBase::masterPropertyWillChange);
+    QObject::connect(&masterProperty, &QtnPropertyBase::propertyDidChange, &slaveProperty, &QtnPropertyBase::masterPropertyDidChange);
+}
+
+void QtnPropertyBase::disconnectMasterSignals(const QtnPropertyBase& masterProperty, QtnPropertyBase& slaveProperty)
+{
+    QObject::disconnect(&masterProperty, &QtnPropertyBase::propertyWillChange, &slaveProperty, &QtnPropertyBase::masterPropertyWillChange);
+    QObject::disconnect(&masterProperty, &QtnPropertyBase::propertyDidChange, &slaveProperty, &QtnPropertyBase::masterPropertyDidChange);
 }
 
 void QtnPropertyBase::setStateInherited(QtnPropertyState stateToSet, bool force)
@@ -492,13 +509,22 @@ void QtnPropertyBase::setStateInherited(QtnPropertyState stateToSet, bool force)
     updateStateInherited(force);
 }
 
-void QtnPropertyBase::masterPropertyStateDidChange(const QtnPropertyBase *changedProperty, const QtnPropertyBase *firedProperty, QtnPropertyChangeReason reason)
+void QtnPropertyBase::masterPropertyWillChange(const QtnPropertyBase*, const QtnPropertyBase* firedProperty, QtnPropertyChangeReason reason, QtnPropertyValuePtr)
+{
+    if (reason & QtnPropertyChangeReasonValue)
+        Q_EMIT propertyWillChange(this, firedProperty, reason, nullptr);
+}
+
+void QtnPropertyBase::masterPropertyDidChange(const QtnPropertyBase *changedProperty, const QtnPropertyBase *firedProperty, QtnPropertyChangeReason reason)
 {
     // state has changed and not from child property
     if ((reason & QtnPropertyChangeReasonState) && (changedProperty == firedProperty))
     {
         setStateInherited(changedProperty->state());
     }
+
+    if (reason & QtnPropertyChangeReasonValue)
+        Q_EMIT propertyDidChange(this, firedProperty, reason);
 }
 
 QVariant QtnPropertyBase::valueAsVariant() const

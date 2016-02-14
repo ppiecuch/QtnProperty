@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2012-1015 Alex Zhondin <qtinuum.team@gmail.com>
+   Copyright (c) 2012-2016 Alex Zhondin <lexxmark.dev@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@
 
 #include "../../../Core/Core/PropertyBool.h"
 #include "../PropertyDelegateFactory.h"
-#include "../PropertyEditorHandler.h"
+#include "../Utils/PropertyEditorHandler.h"
 
 #include <QDebug>
-#include <QStyleOption>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QLabel>

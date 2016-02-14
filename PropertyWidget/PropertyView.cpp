@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2012-1015 Alex Zhondin <qtinuum.team@gmail.com>
+   Copyright (c) 2012-2016 Alex Zhondin <lexxmark.dev@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 #include <QtGui>
 #include <QApplication>
 #include <QScrollBar>
-#include <QStyleOptionFrameV3>
+//#include <QStyleOptionFrameV3>
 #include <QHelpEvent>
 #include <QToolTip>
 
@@ -597,53 +597,9 @@ void QtnPropertyView::wheelEvent(QWheelEvent *e)
     QAbstractScrollArea::wheelEvent(e);
 }
 
-static QString qtnGetPropertyTooltip(const QtnPropertyBase* property)
-{
-    if (!property)
-        return QString();
-
-    QString tooltipText = property->description();
-    if (tooltipText.isEmpty())
-        tooltipText = property->name();
-
-    return tooltipText;
-}
-
 void QtnPropertyView::tooltipEvent(QHelpEvent* e)
 {
-    int index = visibleItemIndexByPoint(e->pos());
-    if (index >= 0)
-    {
-        QRect rect = visibleItemRect(index);
-        int splitPos = splitPosition();
-
-        QString tooltipText;
-
-        const VisibleItem& vItem = m_visibleItems[index];
-
-        // propertyset case
-        if (!vItem.item->delegate)
-        {
-            tooltipText = qtnGetPropertyTooltip(vItem.item->property);
-        }
-        // name sub rect
-        else if (e->x() < splitPos)
-        {
-            rect.setRight(splitPos);
-            tooltipText = qtnGetPropertyTooltip(vItem.item->property);
-        }
-        // value sub rect
-        /*
-        else if (vItem.needTooltip)
-        {
-            rect.setLeft(splitPos);
-            tooltipText = vItem.item->delegate->toolTip();
-        }
-        */
-
-        QToolTip::showText(e->globalPos(), tooltipText, this, rect);
-    }
-    else
+    if (!handleMouseEvent(visibleItemIndexByPoint(e->pos()), e, e->pos()))
     {
         QToolTip::hideText();
     }
@@ -681,6 +637,7 @@ bool QtnPropertyView::handleEvent(QtnEventContext& context, VisibleItem& vItem, 
         // adopt new active sub items
         m_activeSubItems.swap(activeSubItems);
 
+        // process event
         for (auto activeSubItem : m_activeSubItems)
         {
             if (activeSubItem->event(context))
@@ -900,7 +857,6 @@ void QtnPropertyView::deactivateSubItems()
 {
     if (m_grabMouseSubItem)
     {
-        qDebug() << "deactivate " << m_grabMouseSubItem;
         viewport()->releaseMouse();
         m_grabMouseSubItem = nullptr;
     }
@@ -909,6 +865,8 @@ void QtnPropertyView::deactivateSubItems()
         subItem->deactivate(this, QPoint());
 
     m_activeSubItems.clear();
+
+    QToolTip::hideText();
 }
 
 int QtnPropertyView::splitPosition() const

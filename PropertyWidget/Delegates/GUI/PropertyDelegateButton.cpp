@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2012-1015 Alex Zhondin <qtinuum.team@gmail.com>
+   Copyright (c) 2012-2016 Alex Zhondin <lexxmark.dev@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
 */
 
 #include "PropertyDelegateButton.h"
-#include "../../../Core/GUI/PropertyButton.h"
 #include "../PropertyDelegateFactory.h"
+#include "../../PropertyView.h"
+#include "../../../Core/GUI/PropertyButton.h"
+
 #include <QStyleOptionButton>
+#include <QKeyEvent>
 
 void regButtonDelegates()
 {
@@ -47,6 +50,7 @@ void QtnPropertyDelegateButton::createSubItemsImpl(QtnDrawContext& context, QLis
 {
     QtnSubItem buttonItem(true);
     buttonItem.rect = context.rect;
+    buttonItem.setPropertyDescriptionAsTooltip(owner());
 
     buttonItem.drawHandler = [this](QtnDrawContext& context, const QtnSubItem& item) {
 
@@ -107,6 +111,7 @@ void QtnPropertyDelegateButtonLink::createSubItemsImpl(QtnDrawContext& context, 
     QtnSubItem linkItem(true);
     linkItem.rect = context.rect.marginsRemoved(context.margins);
     linkItem.rect.setWidth(context.painter->fontMetrics().width(m_title));
+    linkItem.setPropertyDescriptionAsTooltip(owner());
 
     linkItem.drawHandler = [this](QtnDrawContext& context, const QtnSubItem& item) {
 

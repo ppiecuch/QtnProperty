@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2012-1015 Alex Zhondin <qtinuum.team@gmail.com>
+   Copyright (c) 2012-2016 Alex Zhondin <lexxmark.dev@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -23,6 +23,27 @@ QtnSubItem::QtnSubItem(bool trackState)
       m_activeCount(0),
       m_state(QtnSubItemStateNone)
 {
+}
+
+void QtnSubItem::setTextAsTooltip(const QString& text)
+{
+    tooltipHandler = [text](QtnEventContext&, const QtnSubItem&)->QString {
+        return text;
+    };
+}
+
+void QtnSubItem::setPropertyNameAsTooltip(const QtnPropertyBase& property)
+{
+    tooltipHandler = [&property](QtnEventContext&, const QtnSubItem&)->QString {
+        return property.name();
+    };
+}
+
+void QtnSubItem::setPropertyDescriptionAsTooltip(const QtnPropertyBase& property)
+{
+    tooltipHandler = [&property](QtnEventContext&, const QtnSubItem&)->QString {
+        return property.description();
+    };
 }
 
 bool QtnSubItem::activate(QtnPropertyView *widget, QPoint mousePos)
@@ -124,6 +145,20 @@ bool QtnSubItem::event(QtnEventContext& context)
         }
     }
 
+    if (context.eventType() == QEvent::ToolTip)
+    {
+        if (!tooltipHandler)
+            return false;
+
+        QString tooltipText = tooltipHandler(context, *this);
+        if (!tooltipText.isEmpty())
+        {
+            auto event = context.eventAs<QHelpEvent>();
+            QToolTip::showText(event->globalPos(), tooltipText, context.widget, rect);
+            return true;
+        }
+    }
+
     if (eventHandler)
         return eventHandler(context, *this);
 
@@ -184,3 +219,23 @@ QtnSubItemEvent::QtnSubItemEvent(Type type, QPoint mousePos)
       m_mousePos(mousePos)
 {}
 
+QString qtnElidedText(const QPainter& painter, const QString& text, const QRect& rect, bool* elided)
+{
+    QString newText = painter.fontMetrics().elidedText(text, Qt::ElideRight, rect.width());
+
+    if (elided)
+        *elided = (newText != text);
+
+    return newText;
+}
+
+void qtnDrawValueText(const QString& text, QStylePainter& painter, const QRect& rect, QStyle::State state, bool* needTooltip)
+{
+    Q_UNUSED(state);
+
+    if (text.isEmpty())
+        return;
+
+    painter.drawText(rect, Qt::AlignLeading | Qt::AlignVCenter
+                     , qtnElidedText(painter, text, rect, needTooltip));
+}

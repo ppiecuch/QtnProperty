@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2012-1015 Alex Zhondin <qtinuum.team@gmail.com>
+   Copyright (c) 2012-2016 Alex Zhondin <lexxmark.dev@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,27 +17,30 @@
 #ifndef QTN_PROPERTY_DELEGATE_PROPERTY_SET_H
 #define QTN_PROPERTY_DELEGATE_PROPERTY_SET_H
 
-#include "PropertyDelegate.h"
+#include "../PropertyDelegate.h"
 
 class QtnPropertySet;
 
-class QTN_PW_EXPORT QtnPropertyDelegatePropertySet: public QtnPropertyDelegateTyped<QtnPropertySet, QtnPropertyDelegate>
+class QTN_PW_EXPORT QtnPropertyDelegatePropertySet: public QtnPropertyDelegate
 {
     Q_DISABLE_COPY(QtnPropertyDelegatePropertySet)
 
 public:
     QtnPropertyDelegatePropertySet(QtnPropertySet& owner)
-        : QtnPropertyDelegateTyped<QtnPropertySet, QtnPropertyDelegate>(owner)
+        : m_owner(owner)
     {
     }
 
 protected:
+    QtnPropertyBase* propertyImpl() override;
+    const QtnPropertyBase* propertyImmutableImpl() const override;
     int subPropertyCountImpl() const override;
     QtnPropertyBase* subPropertyImpl(int index) override;
 
-    //virtual void applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes) { Q_UNUSED(attributes); }
-
     void createSubItemsImpl(QtnDrawContext& context, QList<QtnSubItem>& subItems) override;
+
+private:
+    QtnPropertySet& m_owner;
 };
 
 

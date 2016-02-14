@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2012-1015 Alex Zhondin <qtinuum.team@gmail.com>
+   Copyright (c) 2012-2016 Alex Zhondin <lexxmark.dev@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -84,8 +84,13 @@ public:
     void setDelegate(const QtnPropertyDelegateInfo& delegate);
     void setDelegateCallback(const std::function<const QtnPropertyDelegateInfo*()>& callback);
 
-    static QMetaObject::Connection connectMasterState(const QtnPropertyBase& masterProperty, QtnPropertyBase& slaveProperty);
-    static bool disconnectMasterState(const QtnPropertyBase& masterProperty, QtnPropertyBase& slaveProperty);
+    // reset callback
+    bool hasResetCallback() const { return (bool)m_resetCallback; }
+    void setResetCallback(const std::function<void(QtnPropertyBase&)>& resetCallback);
+    bool reset();
+
+    static void connectMasterSignals(const QtnPropertyBase& masterProperty, QtnPropertyBase& slaveProperty);
+    static void disconnectMasterSignals(const QtnPropertyBase& masterProperty, QtnPropertyBase& slaveProperty);
 
 public: // properties for scripting
     Q_PROPERTY(QString name READ name)
@@ -119,7 +124,8 @@ protected:
     void setStateInherited(QtnPropertyState stateToSet, bool force = false);
 
 private:
-    void masterPropertyStateDidChange(const QtnPropertyBase* changedProperty, const QtnPropertyBase* firedProperty, QtnPropertyChangeReason reason);
+    void masterPropertyWillChange(const QtnPropertyBase* changedProperty, const QtnPropertyBase* firedProperty, QtnPropertyChangeReason reason, QtnPropertyValuePtr newValue);
+    void masterPropertyDidChange(const QtnPropertyBase* changedProperty, const QtnPropertyBase* firedProperty, QtnPropertyChangeReason reason);
 
     // getter/setter for "value" property
     QVariant valueAsVariant() const;
@@ -132,6 +138,8 @@ private:
     QtnPropertyState m_stateInherited;
 
     QScopedPointer<QtnPropertyDelegateInfoGetter> m_delegateInfoGetter;
+
+    std::function<void(QtnPropertyBase&)> m_resetCallback;
 
     friend class QtnPropertySet;
 };
