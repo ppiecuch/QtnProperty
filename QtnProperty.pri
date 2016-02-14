@@ -114,3 +114,7 @@ HEADERS += PropertyWidgetAPI.h \
 
 HEADERS += \
     $$HEAERS_AB
+
+midi_connector {
+	include(Contrib/Midi/qtMidi.pri)
+}
