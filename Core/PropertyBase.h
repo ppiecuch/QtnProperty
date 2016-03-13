@@ -39,6 +39,9 @@ public:
     QString name() const { return objectName(); }
     void setName(const QString& name);
 
+    QString label() const { return m_label.isEmpty()?name():m_label; }
+    void setLabel(const QString& label);
+
     QString description() const { return m_description; }
     void setDescription(const QString& description);
 
@@ -94,6 +97,7 @@ public:
 
 public: // properties for scripting
     Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QString label READ label)
     Q_PROPERTY(QString description READ description)
     Q_PROPERTY(qint32 id READ id)
     Q_PROPERTY(bool isEditable READ isEditableByUser)
@@ -131,6 +135,7 @@ private:
     QVariant valueAsVariant() const;
     void setValueAsVariant(const QVariant& value);
 
+	QString m_label;
     QString m_description;
     QtnPropertyID m_id;
 

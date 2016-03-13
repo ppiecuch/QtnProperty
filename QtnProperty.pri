@@ -94,7 +94,6 @@ HEADERS += CoreAPI.h\
     Core/PropertyQPoint.h \
     GUI/PropertyButton.h \
     GUI/PropertyQColor.h \
-    GUI/PropertyButton.h \
     GUI/PropertyQFont.h
 
 HEADERS += PropertyWidgetAPI.h \
@@ -129,5 +128,5 @@ HEADERS += \
     $$HEAERS_AB
 
 midi_connector {
-	include("Contrib/Midi/qtMidi.pri")
+	include("Contrib/Midi/qtMidi/qtMidi.pri")
 }

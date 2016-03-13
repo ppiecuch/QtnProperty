@@ -177,6 +177,15 @@ void QtnPropertyBase::setName(const QString& name)
     Q_EMIT propertyDidChange(this, this, QtnPropertyChangeReasonName);
 }
 
+void QtnPropertyBase::setLabel(const QString& label)
+{
+    Q_EMIT propertyWillChange(this, this, QtnPropertyChangeReasonLabel, QtnPropertyValuePtr(&label));
+
+    m_label = label;
+
+    Q_EMIT propertyDidChange(this, this, QtnPropertyChangeReasonLabel);
+}
+
 void QtnPropertyBase::setDescription(const QString& description)
 {
     Q_EMIT propertyWillChange(this, this, QtnPropertyChangeReasonDescription, QtnPropertyValuePtr(&description));
