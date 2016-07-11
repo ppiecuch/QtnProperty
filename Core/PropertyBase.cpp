@@ -186,6 +186,16 @@ void QtnPropertyBase::setLabel(const QString& label)
     Q_EMIT propertyDidChange(this, this, QtnPropertyChangeReasonLabel);
 }
 
+void QtnPropertyBase::setCppName(const QString& cppName)
+{
+    Q_EMIT propertyWillChange(this, this, QtnPropertyChangeReasonCppName|QtnPropertyChangeReasonName, QtnPropertyValuePtr(&cppName));
+
+    m_cppName = cppName;
+    setObjectName(cppName);
+
+    Q_EMIT propertyDidChange(this, this, QtnPropertyChangeReasonCppName|QtnPropertyChangeReasonName);
+}
+
 void QtnPropertyBase::setDescription(const QString& description)
 {
     Q_EMIT propertyWillChange(this, this, QtnPropertyChangeReasonDescription, QtnPropertyValuePtr(&description));
@@ -419,7 +429,8 @@ bool QtnPropertyBase::fromStr(const QString& str)
     if (!isEditableByUser())
         return false;
 
-    return fromStrImpl(str);
+    QString trimmedStr = str.trimmed();
+    return fromStrImpl(trimmedStr);
 }
 
 bool QtnPropertyBase::toStr(QString& str) const

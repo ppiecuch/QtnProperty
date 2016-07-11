@@ -141,7 +141,7 @@ void TestProperty::state()
     QtnPropertyInt p(&ps);
 
     QCOMPARE(ps.state(), QtnPropertyStateNone);
-    QCOMPARE(p.state(), QtnPropertyStateNone);
+    QCOMPARE(p.state(), QtnPropertyStateCollapsed);
 
     QtnPropertyState master_state = QtnPropertyStateInvisible|QtnPropertyStateNonSimple;
 
@@ -464,17 +464,17 @@ void TestProperty::propertySet()
     QtnPropertySet p(this);
 
     QtnPropertySet pp(&p);
-    pp.setName("pp");
+    pp.setCppName("pp");
 
     QtnPropertyBool b(&pp);
-    b.setName("b");
+    b.setCppName("b");
 
     QtnPropertyFloat f(nullptr);
-    f.setName("f");
+    f.setCppName("f");
     p.addChildProperty(&f);
 
     QtnPropertyBool bb(&p);
-    bb.setName("b");
+    bb.setCppName("b");
 
     QList<QtnPropertyBase*> res = p.findChildProperties("pp");
     QCOMPARE(res.size(), 1);
@@ -1202,7 +1202,7 @@ void TestProperty::stringConversions()
         QCOMPARE(pp.ip.value(), -23);
         pp.ip.setMinValue(-2);
         QCOMPARE(pp.ip.value(), -2);
-        QVERIFY(!pp.ip.fromStr("-32"));
+        QVERIFY(pp.ip.fromStr("-32"));
         QCOMPARE(pp.ip.value(), -2);
 
         QVERIFY(pp.ipc.toStr(str));
@@ -1233,7 +1233,7 @@ void TestProperty::stringConversions()
         QCOMPARE(pp.upc.value(), 11u);
         pp.upc.setMaxValue(100);
         QCOMPARE(pp.upc.value(), 11u);
-        QVERIFY(!pp.upc.fromStr("110"));
+        QVERIFY(pp.upc.fromStr("110"));
         QCOMPARE(pp.upc.value(), 11u);
 
         QVERIFY(pp.fp.toStr(str));
@@ -1432,6 +1432,25 @@ void TestProperty::stringConversions()
         QCOMPARE(p.yy.s.value(), tr("new value"));
         QCOMPARE(p.s.a.value(), true);
     }
+
+    {
+        QtnPropertySet ps(this);
+
+        QtnPropertyBool pb(&ps);
+        pb.setCppName("AAAA");
+        pb.setName("AA AA");
+        pb.setValue(false);
+
+        QtnPropertyInt pi(&ps);
+        pi.setCppName("BBBB");
+        pi.setName("BB BB");
+        pi.setValue(12);
+
+        QString res;
+        QVERIFY(ps.toStr(res));
+
+        QVERIFY(ps.fromStr(res));
+    }
 }
 
 void TestProperty::qObjectProperty()
@@ -1445,7 +1464,7 @@ void TestProperty::qObjectProperty()
         QtnPropertyQStringBase* ps = qobject_cast<QtnPropertyQStringBase*>(p);
         QVERIFY(ps);
         QCOMPARE(ps->value(), tr("Item1"));
-        QCOMPARE(ps->state(), QtnPropertyStateNone);
+        QCOMPARE(ps->state(), QtnPropertyStateCollapsed);
         ps->setValue("NewItemName");
         QCOMPARE(obj.objectName(), tr("NewItemName"));
         QCOMPARE(ps->value(), tr("NewItemName"));

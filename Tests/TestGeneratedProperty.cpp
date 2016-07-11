@@ -1,5 +1,6 @@
 #include "TestGeneratedProperty.h"
 #include "PEG/test.peg.h"
+#include "PEG/test2.peg.h"
 #include <QtTest/QtTest>
 
 void TestGeneratedProperty::test1()
@@ -65,4 +66,53 @@ void TestGeneratedProperty::testAllPropertyTypes()
     default:
         QFAIL("ep expected as COLOR::RED");
     }
+}
+
+void TestGeneratedProperty::testLoadSave()
+{
+    {
+        QtnPropertySetAllPropertyTypes p;
+        QtnPropertySetA p2;
+
+        {
+            QtnPropertySet allProperties(nullptr);
+            allProperties.addChildProperty(&p, false);
+            allProperties.addChildProperty(&p2, false);
+
+            QByteArray data;
+
+            {
+                QDataStream s(&data, QIODevice::WriteOnly);
+                QVERIFY(allProperties.save(s));
+            }
+
+            QCOMPARE(data.size(), 931);
+
+            {
+                QDataStream s(&data, QIODevice::ReadOnly);
+                QVERIFY(allProperties.load(s));
+            }
+
+            QString result;
+            QVERIFY(allProperties.toStr(result));
+
+            QCOMPARE(result.size(), 925);
+        }
+    }
+}
+
+void TestGeneratedProperty::testJson()
+{
+    QtnPropertySetAllPropertyTypes p;
+
+    QJsonObject o;
+    QVERIFY(p.toJson(o));
+
+    QJsonDocument d(o);
+    auto res = d.toJson();
+    QCOMPARE(res.size(), 1321);
+    res = d.toJson(QJsonDocument::Compact);
+    QCOMPARE(res.size(), 752);
+
+    QVERIFY(p.fromJson(o));
 }

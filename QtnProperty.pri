@@ -1,7 +1,6 @@
-include(Common.pri)
-
 CONFIG += unity_build
 QT += script widgets
+
 exists("$$PWD/Contrib/Midi") {
 	message("Midi connector enabled.")
 	CONFIG += midi_connector
