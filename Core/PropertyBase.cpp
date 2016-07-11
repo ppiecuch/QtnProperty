@@ -170,30 +170,29 @@ QtnPropertyBase::~QtnPropertyBase()
 
 void QtnPropertyBase::setName(const QString& name)
 {
-    Q_EMIT propertyWillChange(this, this, QtnPropertyChangeReasonName, QtnPropertyValuePtr(&name));
+    if (name.contains(' ') || name.contains('.'))
+    {
+        // cannot set non-identifier name
+        // use displayName instead
+        Q_ASSERT(false);
+        return;
+    }
+
+    Q_EMIT propertyWillChange(this, this, QtnPropertyChangeReasonDisplayName|QtnPropertyChangeReasonName, QtnPropertyValuePtr(&name));
 
     setObjectName(name);
+    m_displayName = name;
 
-    Q_EMIT propertyDidChange(this, this, QtnPropertyChangeReasonName);
+    Q_EMIT propertyDidChange(this, this, QtnPropertyChangeReasonDisplayName|QtnPropertyChangeReasonName);
 }
 
-void QtnPropertyBase::setLabel(const QString& label)
+void QtnPropertyBase::setDisplayName(const QString& displayName)
 {
-    Q_EMIT propertyWillChange(this, this, QtnPropertyChangeReasonLabel, QtnPropertyValuePtr(&label));
+    Q_EMIT propertyWillChange(this, this, QtnPropertyChangeReasonDisplayName, QtnPropertyValuePtr(&displayName));
 
-    m_label = label;
+    m_displayName = displayName;
 
-    Q_EMIT propertyDidChange(this, this, QtnPropertyChangeReasonLabel);
-}
-
-void QtnPropertyBase::setCppName(const QString& cppName)
-{
-    Q_EMIT propertyWillChange(this, this, QtnPropertyChangeReasonCppName|QtnPropertyChangeReasonName, QtnPropertyValuePtr(&cppName));
-
-    m_cppName = cppName;
-    setObjectName(cppName);
-
-    Q_EMIT propertyDidChange(this, this, QtnPropertyChangeReasonCppName|QtnPropertyChangeReasonName);
+    Q_EMIT propertyDidChange(this, this, QtnPropertyChangeReasonDisplayName);
 }
 
 void QtnPropertyBase::setDescription(const QString& description)
@@ -274,6 +273,11 @@ void QtnPropertyBase::switchStateAuto(QtnPropertyState stateToSwitch, bool force
         addState(stateToSwitch, force);
     else
         removeState(stateToSwitch, force);
+}
+
+bool QtnPropertyBase::isEditable() const
+{
+    return !(state()&(QtnPropertyStateImmutable));
 }
 
 bool QtnPropertyBase::isEditableByUser() const
@@ -426,8 +430,8 @@ bool QtnPropertyBase::saveImpl(QDataStream& stream) const
 
 bool QtnPropertyBase::fromStr(const QString& str)
 {
-    if (!isEditableByUser())
-        return false;
+    if (!isEditable())
+        return true;
 
     QString trimmedStr = str.trimmed();
     return fromStrImpl(trimmedStr);
@@ -440,7 +444,7 @@ bool QtnPropertyBase::toStr(QString& str) const
 
 bool QtnPropertyBase::fromVariant(const QVariant& var)
 {
-    if (!isEditableByUser())
+    if (!isEditable())
         return false;
 
     return fromVariantImpl(var);

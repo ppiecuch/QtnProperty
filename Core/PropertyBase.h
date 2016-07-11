@@ -39,10 +39,8 @@ public:
     QString name() const { return objectName(); }
     void setName(const QString& name);
 
-    QString label() const { return m_label.isEmpty()?name():m_label; }
-    void setLabel(const QString& label);
-    QString cppName() const { return m_cppName; }
-    void setCppName(const QString& cppName);
+    QString displayName() const { return m_displayName; }
+    void setDisplayName(const QString& displayName);
 
     QString description() const { return m_description; }
     void setDescription(const QString& description);
@@ -61,6 +59,7 @@ public:
     void switchState(QtnPropertyState stateToSwitch, bool switchOn, bool force = false);
     void switchStateAuto(QtnPropertyState stateToSwitch, bool force = false);
 
+    bool isEditable() const;
     bool isEditableByUser() const;
     bool isVisible() const;
     bool isSimple() const { return !m_stateLocal.testFlag(QtnPropertyStateNonSimple); }
@@ -99,11 +98,10 @@ public:
 
 public: // properties for scripting
     Q_PROPERTY(QString name READ name)
-    Q_PROPERTY(QString label READ label)
-    Q_PROPERTY(QString cppName READ cppName)
+    Q_PROPERTY(QString displayName READ displayName)
     Q_PROPERTY(QString description READ description)
     Q_PROPERTY(qint32 id READ id)
-    Q_PROPERTY(bool isEditable READ isEditableByUser)
+    Q_PROPERTY(bool isEditable READ isEditable)
     Q_PROPERTY(quint32 state READ state)
     Q_PROPERTY(QVariant value READ valueAsVariant WRITE setValueAsVariant)
 
@@ -138,8 +136,7 @@ private:
     QVariant valueAsVariant() const;
     void setValueAsVariant(const QVariant& value);
 
-	QString m_label;
-    QString m_cppName;
+    QString m_displayName;
     QString m_description;
     QtnPropertyID m_id;
 
