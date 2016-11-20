@@ -6,18 +6,9 @@ VERSION = 1.1.0
 
 QT += core gui widgets script
 CONFIG += staticlib
-CONFIG += unity_build
-exists("$$PWD/../Contrib/Midi") {
-	message("Midi connector enabled.")
-	CONFIG += midi_connector
-}
+CONFIG += qtn_unity_build
 
-CONFIG(staticlib) {
-  DEFINES += STATICLIB
-}
-DEFINES += QTN_PE_PROPERTYWIDGET_LIBRARY
-
-unity_build: SOURCES += QtnPropertyWidgetUnity.cpp
+qtn_unity_build: SOURCES += QtnPropertyWidgetUnity.cpp
 else: SOURCES += PropertyWidget.cpp \
     PropertyView.cpp \
     Utils/InplaceEditing.cpp \
@@ -42,6 +33,7 @@ else: SOURCES += PropertyWidget.cpp \
     Delegates/Core/PropertyDelegateQPoint.cpp \
     Delegates/GUI/PropertyDelegateQFont.cpp \
     Delegates/GUI/PropertyDelegateQColor.cpp \
+    Delegates/GUI/PropertyDelegateQPen.cpp \
     Delegates/GUI/PropertyDelegateButton.cpp \
     Utils/AccessibilityProxy.cpp
 
@@ -70,6 +62,7 @@ HEADERS += PropertyWidgetAPI.h \
     Delegates/Core/PropertyDelegateQSize.h \
     Delegates/Core/PropertyDelegateQPoint.h \
     Delegates/GUI/PropertyDelegateQFont.h \
+    Delegates/GUI/PropertyDelegateQPen.h \
     Delegates/GUI/PropertyDelegateQColor.h \
     Delegates/GUI/PropertyDelegateButton.h \
     Utils/AccessibilityProxy.h
@@ -77,6 +70,7 @@ HEADERS += PropertyWidgetAPI.h \
 LIBS += -L$$BIN_DIR -lQtnPropertyCore
 INCLUDEPATH += $$TOP_SRC_DIR/Core
 
-midi_connector {
+exists("$$PWD/../Contrib/Midi") {
+	message("Midi connector enabled.")
 	include("$$PWD/../Contrib/Midi/qtMidi/qtMidi.pri")
 }

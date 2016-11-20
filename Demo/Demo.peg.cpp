@@ -179,14 +179,14 @@ void QtnPropertySetSubPropertySetType::disconnectSlots()
 
 void QtnPropertySetSubPropertySetType::connectDelegates()
 {
-    SwitchProperty.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
+    SwitchProperty.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
         QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
         info->name = "ComboBox";
         info->attributes["labelFalse"] = "Off";
         info->attributes["labelTrue"] = "On";
         return info.take();
     });
-    FileNameProperty.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
+    FileNameProperty.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
         QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
         info->name = "File";
         info->attributes["acceptMode"] = QFileDialog::AcceptSave;
@@ -194,20 +194,20 @@ void QtnPropertySetSubPropertySetType::connectDelegates()
         info->attributes["nameFilters"] = QStringList() << "Text files (*.txt)" << "All files (*)";
         return info.take();
     });
-    FolderNameProperty.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
+    FolderNameProperty.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
         QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
         info->name = "File";
         info->attributes["fileMode"] = QFileDialog::DirectoryOnly;
         info->attributes["invalidColor"] = QColor(Qt::blue);
         return info.take();
     });
-    StringFromList.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
+    StringFromList.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
         QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
         info->name = "List";
         info->attributes["items"] = QStringList() << "one" << "two" << "three" << "four";
         return info.take();
     });
-    CircleShapeColor.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
+    CircleShapeColor.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
         QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
         info->attributes["shape"] = QtnColorDelegateShapeCircle;
         return info.take();
@@ -217,13 +217,18 @@ void QtnPropertySetSubPropertySetType::connectDelegates()
 QtnPropertySetSamplePS::QtnPropertySetSamplePS(QObject* parent)
     : QtnPropertySet(parent)
     , BoolProperty(*new QtnPropertyBool(this))
+    , LayerProperty(*new QtnPropertyLayer(this))
+    , PenStyleProperty(*new QtnPropertyQPenStyle(this))
+    , PenProperty(*new QtnPropertyQPen(this))
     , ButtonProperty(*new QtnPropertyButton(this))
     , ButtonLinkProperty(*new QtnPropertyButton(this))
     , RGBColor(*new QtnPropertyABColor(this))
+    , ColorSolidDelegate(*new QtnPropertyQColor(this))
     , FloatPropertySliderBox(*new QtnPropertyFloat(this))
     , DoubleProperty(*new QtnPropertyDouble(this))
     , FloatProperty(*new QtnPropertyFloat(this))
     , IntProperty(*new QtnPropertyInt(this))
+    , IntPropertyComboBox(*new QtnPropertyInt(this))
     , UIntProperty(*new QtnPropertyUInt(this))
     , EnumProperty(*new QtnPropertyEnum(this))
     , EnumFlagsProperty(*new QtnPropertyEnumFlags(this))
@@ -253,13 +258,18 @@ QtnPropertySetSamplePS& QtnPropertySetSamplePS::operator=(const QtnPropertySetSa
     Q_UNUSED(other);
 
     BoolProperty = other.BoolProperty;
+    LayerProperty = other.LayerProperty;
+    PenStyleProperty = other.PenStyleProperty;
+    PenProperty = other.PenProperty;
     ButtonProperty = other.ButtonProperty;
     ButtonLinkProperty = other.ButtonLinkProperty;
     RGBColor = other.RGBColor;
+    ColorSolidDelegate = other.ColorSolidDelegate;
     FloatPropertySliderBox = other.FloatPropertySliderBox;
     DoubleProperty = other.DoubleProperty;
     FloatProperty = other.FloatProperty;
     IntProperty = other.IntProperty;
+    IntPropertyComboBox = other.IntPropertyComboBox;
     UIntProperty = other.UIntProperty;
     EnumProperty = other.EnumProperty;
     EnumFlagsProperty = other.EnumFlagsProperty;
@@ -302,6 +312,21 @@ bool QtnPropertySetSamplePS::copyValuesImpl(QtnPropertySet* propertySetCopyFrom,
         BoolProperty = theCopyFrom->BoolProperty;
     }
 
+    if (!(theCopyFrom->LayerProperty.state() & ignoreMask))
+    {
+        LayerProperty = theCopyFrom->LayerProperty;
+    }
+
+    if (!(theCopyFrom->PenStyleProperty.state() & ignoreMask))
+    {
+        PenStyleProperty = theCopyFrom->PenStyleProperty;
+    }
+
+    if (!(theCopyFrom->PenProperty.state() & ignoreMask))
+    {
+        PenProperty = theCopyFrom->PenProperty;
+    }
+
     if (!(theCopyFrom->ButtonProperty.state() & ignoreMask))
     {
         ButtonProperty = theCopyFrom->ButtonProperty;
@@ -315,6 +340,11 @@ bool QtnPropertySetSamplePS::copyValuesImpl(QtnPropertySet* propertySetCopyFrom,
     if (!(theCopyFrom->RGBColor.state() & ignoreMask))
     {
         RGBColor = theCopyFrom->RGBColor;
+    }
+
+    if (!(theCopyFrom->ColorSolidDelegate.state() & ignoreMask))
+    {
+        ColorSolidDelegate = theCopyFrom->ColorSolidDelegate;
     }
 
     if (!(theCopyFrom->FloatPropertySliderBox.state() & ignoreMask))
@@ -335,6 +365,11 @@ bool QtnPropertySetSamplePS::copyValuesImpl(QtnPropertySet* propertySetCopyFrom,
     if (!(theCopyFrom->IntProperty.state() & ignoreMask))
     {
         IntProperty = theCopyFrom->IntProperty;
+    }
+
+    if (!(theCopyFrom->IntPropertyComboBox.state() & ignoreMask))
+    {
+        IntPropertyComboBox = theCopyFrom->IntPropertyComboBox;
     }
 
     if (!(theCopyFrom->UIntProperty.state() & ignoreMask))
@@ -410,6 +445,20 @@ void QtnPropertySetSamplePS::init()
     static QString BoolProperty_description = "Property to hold boolean values.";
     BoolProperty.setDescription(BoolProperty_description);
     BoolProperty.setValue(false);
+    static QString LayerProperty_name = tr("LayerProperty");
+    LayerProperty.setName(LayerProperty_name);
+    static QString LayerProperty_description = "Property to hold layer.";
+    LayerProperty.setDescription(LayerProperty_description);
+    LayerProperty.setValue(0);
+    static QString PenStyleProperty_name = tr("PenStyleProperty");
+    PenStyleProperty.setName(PenStyleProperty_name);
+    static QString PenStyleProperty_description = "Property to hold pen style values.";
+    PenStyleProperty.setDescription(PenStyleProperty_description);
+    PenStyleProperty.setValue(Qt::DashLine);
+    static QString PenProperty_name = tr("PenProperty");
+    PenProperty.setName(PenProperty_name);
+    static QString PenProperty_description = "Property to hold QPen values.";
+    PenProperty.setDescription(PenProperty_description);
     static QString ButtonProperty_name = tr("ButtonProperty");
     ButtonProperty.setName(ButtonProperty_name);
     ButtonProperty.setClickHandler([](const QtnPropertyButton* bttn) {
@@ -434,6 +483,11 @@ void QtnPropertySetSamplePS::init()
             RGBColor = Qt::green;
         });
     RGBColor.setValue(QColor(123, 150, 10));
+    static QString ColorSolidDelegate_name = tr("ColorSolidDelegate");
+    ColorSolidDelegate.setName(ColorSolidDelegate_name);
+    static QString ColorSolidDelegate_description = "QColor property with Solid delegate";
+    ColorSolidDelegate.setDescription(ColorSolidDelegate_description);
+    ColorSolidDelegate.setValue(QColor(13, 150, 10));
     static QString FloatPropertySliderBox_name = tr("FloatPropertySliderBox");
     FloatPropertySliderBox.setName(FloatPropertySliderBox_name);
     static QString FloatPropertySliderBox_description = "Property to hold float values in range [0, 10].";
@@ -465,6 +519,12 @@ void QtnPropertySetSamplePS::init()
     IntProperty.setDescription(IntProperty_description);
     IntProperty.setStepValue(15);
     IntProperty.setValue(10);
+    static QString IntPropertyComboBox_name = tr("IntPropertyComboBox");
+    IntPropertyComboBox.setName(IntPropertyComboBox_name);
+    static QString IntPropertyComboBox_description = "Property to hold integer values with changing step 15.";
+    IntPropertyComboBox.setDescription(IntPropertyComboBox_description);
+    IntPropertyComboBox.setStepValue(15);
+    IntPropertyComboBox.setValue(10);
     static QString UIntProperty_name = tr("UIntProperty");
     UIntProperty.setName(UIntProperty_name);
     static QString UIntProperty_description = "Property to hold unsigned integer values in range [100, 200].";
@@ -575,36 +635,54 @@ void QtnPropertySetSamplePS::on_BoolButtonProperty_propertyDidChange(const QtnPr
 
 void QtnPropertySetSamplePS::connectDelegates()
 {
-    ButtonProperty.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
+    PenProperty.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
+        QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
+        info->attributes["editColor"] = true;
+        info->attributes["editStyle"] = true;
+        info->attributes["editWidth"] = true;
+        return info.take();
+    });
+    ButtonProperty.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
         QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
         info->attributes["title"] = "Click me";
         return info.take();
     });
-    ButtonLinkProperty.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
+    ButtonLinkProperty.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
         QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
         info->name = "Link";
         info->attributes["title"] = "Click on me";
         return info.take();
     });
-    RGBColor.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
+    RGBColor.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
         QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
         info->attributes["rgbSubItems"] = true;
         return info.take();
     });
-    FloatPropertySliderBox.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
+    ColorSolidDelegate.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
+        QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
+        info->name = "Solid";
+        return info.take();
+    });
+    FloatPropertySliderBox.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
         QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
         info->name = "SliderBox";
         info->attributes["drawBorder"] = false;
         info->attributes["fillColor"] = QColor::fromRgb(170, 170, 255);
         return info.take();
     });
-    QColorProperty.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
+    IntPropertyComboBox.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
+        QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
+        info->name = "IntList";
+        info->attributes["values"] = QVariant::fromValue(QList<int>() << 10 << 12 << 15);
+        return info.take();
+    });
+    QColorProperty.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
         QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
         info->attributes["editor"] = QtnColorDelegateEditorNone;
         info->attributes["rgbSubItems"] = true;
         return info.take();
     });
-    BoolButtonProperty.setDelegateCallback([] () -> const QtnPropertyDelegateInfo * {
+    BoolButtonProperty.setDelegateCallback([] () -> QtnPropertyDelegateInfo * {
         QScopedPointer<QtnPropertyDelegateInfo> info(new QtnPropertyDelegateInfo());
         info->name = "Button";
         info->attributes["title"] = "Button title";

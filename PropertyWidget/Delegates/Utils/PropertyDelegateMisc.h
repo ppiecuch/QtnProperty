@@ -18,6 +18,7 @@
 #define QTN_PROPERTY_DELEGATE_MISC_H
 
 #include "../PropertyDelegate.h"
+#include <QDoubleSpinBox>
 
 class QTN_PW_EXPORT QtnInplaceInfo
 {
@@ -62,7 +63,6 @@ protected:
 
     // override to draw property value or override propertyValueToStrImpl to draw value as text
     virtual void drawValueImpl(QStylePainter& painter, const QRect& rect, const QStyle::State& state, bool* needTooltip = nullptr) const;
-//    virtual QString toolTipImpl() const;
     // override if property value can be displayed as string
     virtual bool propertyValueToStrImpl(QString& strValue) const { Q_UNUSED(strValue); return false; }
     // override to filter key events that will activate property Editor
@@ -151,5 +151,44 @@ private:
 };
 
 QTN_PW_EXPORT QtnPropertyDelegate* qtnCreateDelegateError(QtnPropertyBase& owner, QString error);
+
+class QTN_PW_EXPORT QtnDoubleSpinBox : public QDoubleSpinBox
+{
+public:
+    explicit QtnDoubleSpinBox(QWidget* parent);
+    QString textFromValue(double val) const override;
+};
+
+class QTN_PW_EXPORT QtnSpinBoxUnsigned: public QSpinBox
+{
+    Q_OBJECT
+
+public:
+    explicit QtnSpinBoxUnsigned(QWidget* parent);
+
+    void setUintRange(quint32 minValue, quint32 maxValue);
+    void setUintSingleStep(quint32 stepValue);
+    void setUintValue(quint32 value);
+
+Q_SIGNALS:
+    void uintValueChanged(quint32 value);
+
+protected:
+    using QSpinBox::setRange;
+    using QSpinBox::setSingleStep;
+    using QSpinBox::setValue;
+
+    int valueFromText(const QString& text) const override;
+    QString textFromValue(int val) const override;
+    QValidator::State validate(QString &text, int &) const override;
+
+
+private:
+    void onValueChanged(int value);
+
+    quint32 m_min;
+    quint32 m_max;
+};
+
 
 #endif // QTN_PROPERTY_DELEGATE_MISC_H

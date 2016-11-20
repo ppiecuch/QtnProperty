@@ -41,6 +41,9 @@ class QTN_PE_CORE_EXPORT QtnPropertyQColorBase: public QtnSinglePropertyBase<QCo
 public:
     explicit QtnPropertyQColorBase(QObject *parent);
 
+    static bool colorFromStr(const QString& str, QColor& color);
+    static bool strFromColor(const QColor& color, QString& str);
+
 protected:
     // string conversion implementation
     bool fromStrImpl(const QString& str) override;

@@ -1,6 +1,7 @@
 #include "../Core/PropertyCore.h"
 #include "../Core/PropertyGUI.h"
 #include "AB/PropertyABColor.h"
+#include "Layer/PropertyLayer.h"
 
 #include_cpp <QFileDialog>
 #include_cpp <QDebug>
@@ -25,6 +26,29 @@ property_set SamplePS
     {
         description = "Property to hold boolean values.";
         value = false;
+    }
+    
+    Layer LayerProperty
+    {
+        description = "Property to hold layer.";
+        value = 0;
+    }
+    
+    QPenStyle PenStyleProperty
+    {
+        description = "Property to hold pen style values.";
+        value = Qt::DashLine;
+    }
+
+     QPen PenProperty
+    {
+        description = "Property to hold QPen values.";
+        delegate
+        {
+            editColor = true;
+            editStyle = true;
+            editWidth = true;
+        }
     }
 
     Button ButtonProperty
@@ -62,6 +86,14 @@ property_set SamplePS
         };
 
         delegate { rgbSubItems = true; }
+    }
+
+    QColor ColorSolidDelegate
+    {
+        description = "QColor property with Solid delegate";
+        value = QColor(13, 150, 10);
+
+        delegate Solid;
     }
 
     Float FloatPropertySliderBox
@@ -103,6 +135,17 @@ property_set SamplePS
         description = "Property to hold integer values with changing step 15.";
         value = 10;
         stepValue = 15;
+    }
+
+    Int IntPropertyComboBox
+    {
+        description = "Property to hold integer values with changing step 15.";
+        value = 10;
+        stepValue = 15;
+        delegate IntList
+        {
+            values = QVariant::fromValue(QList<int>() << 10 << 12 << 15);
+        }
     }
 
     UInt UIntProperty

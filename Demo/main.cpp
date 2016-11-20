@@ -2,10 +2,14 @@
 #include <QApplication>
 
 void regABColorDelegates();
+void regIntListDelegates();
+void regLayerDelegates();
 
 int main(int argc, char *argv[])
 {
     regABColorDelegates();
+    regIntListDelegates();
+    regLayerDelegates();
 
     QApplication a(argc, argv);
     MainWindow w;

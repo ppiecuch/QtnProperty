@@ -244,7 +244,7 @@ void TestProperty::propertyDelegateCallback()
     QtnPropertyBool p(this);
     QVERIFY(!p.delegate());
 
-    p.setDelegateCallback([]()->const QtnPropertyDelegateInfo* {
+    p.setDelegateCallback([]()->QtnPropertyDelegateInfo* {
         QtnPropertyDelegateInfo *info(new QtnPropertyDelegateInfo());
         info->name = "delegate";
         info->attributes["one"] = 1;
@@ -457,6 +457,45 @@ void TestProperty::propertyEnumFlags()
     p = MASK::TWO | MASK::FOUR;
     QVERIFY(p & MASK::FOUR);
     QVERIFY(!(p & MASK::ONE));
+}
+
+void TestProperty::propertyPen()
+{
+    {
+        QtnPropertyQPenStyle p(this);
+        p = Qt::SolidLine;
+        QCOMPARE(p.value(), Qt::SolidLine);
+
+        p = Qt::DashDotDotLine;
+        QCOMPARE(p.value(), Qt::DashDotDotLine);
+    }
+
+    {
+        QtnPropertyQPen p(this);
+
+        {
+            QPen pen(QBrush(QColor(10, 100, 200)), 10, Qt::DashDotLine, Qt::RoundCap, Qt::SvgMiterJoin);
+            p = pen;
+            QCOMPARE(p.value(), pen);
+        }
+
+        {
+            QString str;
+            QVERIFY(p.toStr(str));
+            QCOMPARE(str, QString("#0a64c8, Qt::DashDotLine, 10, Qt::RoundCap, Qt::SvgMiterJoin"));
+        }
+
+        {
+            QString str = "#0000ff, Qt::DashLine, 3, Qt::SquareCap, Qt::BevelJoin";
+            QVERIFY(p.fromStr(str));
+
+            QCOMPARE(p.value().color(), QColor(Qt::blue));
+            QCOMPARE(p.value().width(), 3);
+            QCOMPARE(p.value().style(), Qt::DashLine);
+            QCOMPARE(p.value().capStyle(), Qt::SquareCap);
+            QCOMPARE(p.value().joinStyle(), Qt::BevelJoin);
+        }
+    }
 }
 
 void TestProperty::propertySet()

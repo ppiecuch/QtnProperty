@@ -14,26 +14,22 @@
    limitations under the License.
 */
 
-#include "PropertyQFont.h"
+#ifndef PROPERTY_DELEGATE_INT_LIST_H
+#define PROPERTY_DELEGATE_INT_LIST_H
 
-QtnPropertyQFontBase::QtnPropertyQFontBase(QObject *parent)
-    : QtnSinglePropertyBase<QFont>(parent)
+#include "Delegates/Core/PropertyDelegateInt.h"
+
+class QtnPropertyIntBase;
+
+class QTN_PW_EXPORT QtnPropertyDelegateIntList: public QtnPropertyDelegateInt
 {
-}
+    Q_DISABLE_COPY(QtnPropertyDelegateIntList)
 
-bool QtnPropertyQFontBase::fromStrImpl(const QString& str)
-{
-    QFont font;
-    if (!font.fromString(str.trimmed()))
-        return false;
+public:
+    QtnPropertyDelegateIntList(QtnPropertyIntBase& owner);
 
-    setValue(font);
-    return true;
-}
+protected:
+    QWidget* createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo = nullptr) override;
+};
 
-bool QtnPropertyQFontBase::toStrImpl(QString& str) const
-{
-    QFont v = value();
-    str = v.toString();
-    return true;
-}
+#endif // PROPERTY_DELEGATE_INT_LIST_H

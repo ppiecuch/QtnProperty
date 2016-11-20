@@ -1,16 +1,10 @@
-CONFIG += unity_build
+CONFIG += qtn_unity_build qtn_contrib
 QT += script widgets
-
-exists("$$PWD/Contrib/Midi") {
-	message("Midi connector enabled.")
-	CONFIG += midi_connector
-}
 
 QTNPROPVERSION = 1.0.0
 
 INCLUDEPATH += $$PWD $$PWD/Core $$PWD/PropertyWidget
 
-DEFINES += STATICLIB QTN_PE_CORE_LIBRARY QTN_PE_PROPERTYWIDGET_LIBRARY
 VPATH += $$PWD/Core $$PWD/PropertyWidget
 
 SOURCES_CORE += PropertyBase.cpp \
@@ -31,6 +25,7 @@ SOURCES_CORE += PropertyBase.cpp \
     Core/PropertyQPoint.cpp \
     GUI/PropertyQColor.cpp \
     GUI/PropertyButton.cpp \
+    GUI/PropertyQPen.cpp \
     GUI/PropertyQFont.cpp
 
 SOURCES_WIDGET += PropertyWidget.cpp \
@@ -58,11 +53,16 @@ SOURCES_WIDGET += PropertyWidget.cpp \
     Delegates/GUI/PropertyDelegateQFont.cpp \
     Delegates/GUI/PropertyDelegateQColor.cpp \
     Delegates/GUI/PropertyDelegateButton.cpp \
+    Delegates/GUI/PropertyDelegateQPen.cpp \
     Utils/AccessibilityProxy.cpp
 
-!isEmpty(AB_BUILD) {
-	SOURCES_AB = Contrib/AB/PropertyABColor.cpp Contrib/AB/PropertyDelegateABColor.cpp
-	HEADERS_AB = Contrib/AB/PropertyABColor.h Contrib/AB/PropertyDelegateABColor.h
+qtn_contrib {
+	SOURCES_CONTRIB = Contrib/AB/PropertyABColor.cpp Contrib/AB/PropertyDelegateABColor.cpp
+	HEADERS_CONTRIB = Contrib/AB/PropertyABColor.h Contrib/AB/PropertyDelegateABColor.h
+    exists("$$PWD/Contrib/Midi") {
+        message("Midi connector enabled.")
+        include("Contrib/Midi/qtMidi/qtMidi.pri")
+    }
 }
 
 unity_build: SOURCES += $$PWD/QtnPropertyUnity.cpp
@@ -93,6 +93,7 @@ HEADERS += CoreAPI.h\
     Core/PropertyQPoint.h \
     GUI/PropertyButton.h \
     GUI/PropertyQColor.h \
+    GUI/PropertyQPen.h \
     GUI/PropertyQFont.h
 
 HEADERS += PropertyWidgetAPI.h \
@@ -121,11 +122,8 @@ HEADERS += PropertyWidgetAPI.h \
     Delegates/GUI/PropertyDelegateQFont.h \
     Delegates/GUI/PropertyDelegateQColor.h \
     Delegates/GUI/PropertyDelegateButton.h \
+    Delegates/GUI/PropertyDelegateQPen.h \
     Utils/AccessibilityProxy.h
 
 HEADERS += \
-    $$HEAERS_AB
-
-midi_connector {
-	include("Contrib/Midi/qtMidi/qtMidi.pri")
-}
+    $$HEAERS_CONTRIB

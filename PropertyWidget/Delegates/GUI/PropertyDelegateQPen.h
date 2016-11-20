@@ -14,19 +14,19 @@
    limitations under the License.
 */
 
-#ifndef PROPERTY_DELEGATE_QCOLOR_H
-#define PROPERTY_DELEGATE_QCOLOR_H
+#ifndef PROPERTY_DELEGATE_QPEN_H
+#define PROPERTY_DELEGATE_QPEN_H
 
 #include "../Utils/PropertyDelegateMisc.h"
 
-class QtnPropertyQColorBase;
+class QtnPropertyQPenStyleBase;
 
-class QTN_PW_EXPORT QtnPropertyDelegateQColor: public QtnPropertyDelegateTypedEx<QtnPropertyQColorBase>
+class QTN_PW_EXPORT QtnPropertyDelegateQPenStyle: public QtnPropertyDelegateTyped<QtnPropertyQPenStyleBase>
 {
-    Q_DISABLE_COPY(QtnPropertyDelegateQColor)
+    Q_DISABLE_COPY(QtnPropertyDelegateQPenStyle)
 
 public:
-    QtnPropertyDelegateQColor(QtnPropertyQColorBase& owner);
+    QtnPropertyDelegateQPenStyle(QtnPropertyQPenStyleBase& owner);
 
 protected:
     void applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes) override;
@@ -35,21 +35,23 @@ protected:
     bool propertyValueToStrImpl(QString& strValue) const override;
 
 private:
-    quint32 m_shape;
-    quint32 m_editor;
+    bool m_showNoPen;
 };
 
-class QTN_PW_EXPORT QtnPropertyDelegateQColorSolid: public QtnPropertyDelegateTyped<QtnPropertyQColorBase>
+class QtnPropertyQPenBase;
+
+class QTN_PW_EXPORT QtnPropertyDelegateQPen: public QtnPropertyDelegateTypedEx<QtnPropertyQPenBase>
 {
-    Q_DISABLE_COPY(QtnPropertyDelegateQColorSolid)
+    Q_DISABLE_COPY(QtnPropertyDelegateQPen)
 
 public:
-    QtnPropertyDelegateQColorSolid(QtnPropertyQColorBase& owner);
+    QtnPropertyDelegateQPen(QtnPropertyQPenBase& owner);
 
 protected:
-    bool createSubItemValueImpl(QtnDrawContext& context, QtnSubItem& subItemValue) override;
+    void applyAttributesImpl(const QtnPropertyDelegateAttributes& attributes) override;
     void drawValueImpl(QStylePainter& painter, const QRect& rect, const QStyle::State& state, bool* needTooltip = nullptr) const override;
     QWidget* createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo = nullptr) override;
+    bool propertyValueToStrImpl(QString& strValue) const override;
 };
 
-#endif // PROPERTY_DELEGATE_QCOLOR_H
+#endif // PROPERTY_DELEGATE_QPEN_H

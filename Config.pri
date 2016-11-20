@@ -9,7 +9,7 @@ linux:BIN_DIR = $$TOP_SRC_DIR/bin-linux
 isEmpty(BIN_DIR):message(CRITICAL, "Only mac/win32/linux supported")
 else:DESTDIR = $$BIN_DIR
 
-debug: DBG = dgb-
+CONFIG(debug,debug|release): DBG = dgb-
 else: DBG = rel-
 
 OBJECTS_DIR = $$TOP_SRC_DIR/workdir/$$DBG$$[QMAKE_SPEC]/$$TARGET/obj

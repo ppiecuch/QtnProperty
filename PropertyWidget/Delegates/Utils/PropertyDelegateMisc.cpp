@@ -21,6 +21,16 @@
 #include <QLineEdit>
 #include <QKeyEvent>
 
+static const quint32 qtn_u_2 = std::numeric_limits<quint32>::max() / 2 + 1;
+static qint32 qtn_u2i(quint32 val)
+{
+    return qint32(val - qtn_u_2);
+}
+static quint32 qtn_i2u(qint32 val)
+{
+    return (quint32)val + qtn_u_2;
+}
+
 QIcon qtnResetIcon;
 
 static QIcon resetIcon()
@@ -393,5 +403,93 @@ bool QtnPropertyDelegateError::createSubItemValueImpl(QtnDrawContext& /*context*
 QtnPropertyDelegate* qtnCreateDelegateError(QtnPropertyBase& owner, QString error)
 {
     return new QtnPropertyDelegateError(owner, error);
+}
+
+QtnDoubleSpinBox::QtnDoubleSpinBox(QWidget* parent)
+    : QDoubleSpinBox(parent)
+{}
+
+QString QtnDoubleSpinBox::textFromValue(double val) const
+{
+    // get original text
+    QString text = QDoubleSpinBox::textFromValue(val);
+
+    // remove thousand separator
+    text.remove(locale().groupSeparator());
+
+    // remove trailing zero chars after decimal point
+    int index = text.lastIndexOf(locale().decimalPoint());
+    if (index != -1)
+    {
+        int lastDigit = text.length() - 1;
+        for (int i = lastDigit; i > index; --i)
+        {
+            if (text[i] == '0')
+                lastDigit = i;
+            else
+                break;
+        }
+        if (lastDigit == index + 1)
+            lastDigit = index;
+
+        text.remove(lastDigit, text.length() - 1);
+    }
+
+    return text;
+}
+
+QtnSpinBoxUnsigned::QtnSpinBoxUnsigned(QWidget* parent)
+    : QSpinBox(parent),
+      m_min(0),
+      m_max(0)
+{
+    QObject::connect(  this, static_cast<void (QSpinBox::*)(int)>(&QtnSpinBoxUnsigned::valueChanged)
+                     , this, &QtnSpinBoxUnsigned::onValueChanged);
+}
+
+void QtnSpinBoxUnsigned::setUintRange(quint32 minValue, quint32 maxValue)
+{
+    m_min = minValue;
+    m_max = maxValue;
+    setRange(qtn_u2i(minValue), qtn_u2i(maxValue));
+}
+
+void QtnSpinBoxUnsigned::setUintSingleStep(quint32 stepValue)
+{
+    setSingleStep(qtn_u2i(stepValue));
+}
+
+void QtnSpinBoxUnsigned::setUintValue(quint32 value)
+{
+    setValue(qtn_u2i(value));
+}
+
+int QtnSpinBoxUnsigned::valueFromText(const QString& text) const
+{
+    return qtn_u2i(locale().toUInt(text));
+}
+
+QString QtnSpinBoxUnsigned::textFromValue(int val) const
+{
+    return locale().toString(qtn_i2u(val));
+}
+
+QValidator::State QtnSpinBoxUnsigned::validate(QString &text, int &) const
+{
+    bool ok = false;
+    auto value = locale().toUInt(text, &ok);
+    if (!ok)
+        return QValidator::Invalid;
+    if (value < m_min)
+        return QValidator::Intermediate;
+    if (value > m_max)
+        return QValidator::Intermediate;
+
+    return QValidator::Acceptable;
+}
+
+void QtnSpinBoxUnsigned::onValueChanged(int value)
+{
+    Q_EMIT uintValueChanged(qtn_i2u(value));
 }
 
