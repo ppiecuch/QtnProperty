@@ -217,7 +217,10 @@ void QtnPropertySetSubPropertySetType::connectDelegates()
 QtnPropertySetSamplePS::QtnPropertySetSamplePS(QObject* parent)
     : QtnPropertySet(parent)
     , BoolProperty(*new QtnPropertyBool(this))
+    , FreqProperty(*new QtnPropertyFreq(this))
     , LayerProperty(*new QtnPropertyLayer(this))
+    , BrushStyleProperty(*new QtnPropertyQBrushStyle(this))
+    , PenWidthProperty(*new QtnPropertyPenWidth(this))
     , PenStyleProperty(*new QtnPropertyQPenStyle(this))
     , PenProperty(*new QtnPropertyQPen(this))
     , ButtonProperty(*new QtnPropertyButton(this))
@@ -258,7 +261,10 @@ QtnPropertySetSamplePS& QtnPropertySetSamplePS::operator=(const QtnPropertySetSa
     Q_UNUSED(other);
 
     BoolProperty = other.BoolProperty;
+    FreqProperty = other.FreqProperty;
     LayerProperty = other.LayerProperty;
+    BrushStyleProperty = other.BrushStyleProperty;
+    PenWidthProperty = other.PenWidthProperty;
     PenStyleProperty = other.PenStyleProperty;
     PenProperty = other.PenProperty;
     ButtonProperty = other.ButtonProperty;
@@ -312,9 +318,24 @@ bool QtnPropertySetSamplePS::copyValuesImpl(QtnPropertySet* propertySetCopyFrom,
         BoolProperty = theCopyFrom->BoolProperty;
     }
 
+    if (!(theCopyFrom->FreqProperty.state() & ignoreMask))
+    {
+        FreqProperty = theCopyFrom->FreqProperty;
+    }
+
     if (!(theCopyFrom->LayerProperty.state() & ignoreMask))
     {
         LayerProperty = theCopyFrom->LayerProperty;
+    }
+
+    if (!(theCopyFrom->BrushStyleProperty.state() & ignoreMask))
+    {
+        BrushStyleProperty = theCopyFrom->BrushStyleProperty;
+    }
+
+    if (!(theCopyFrom->PenWidthProperty.state() & ignoreMask))
+    {
+        PenWidthProperty = theCopyFrom->PenWidthProperty;
     }
 
     if (!(theCopyFrom->PenStyleProperty.state() & ignoreMask))
@@ -445,11 +466,27 @@ void QtnPropertySetSamplePS::init()
     static QString BoolProperty_description = "Property to hold boolean values.";
     BoolProperty.setDescription(BoolProperty_description);
     BoolProperty.setValue(false);
+    static QString FreqProperty_name = tr("FreqProperty");
+    FreqProperty.setName(FreqProperty_name);
+    static QString FreqProperty_description = "Property to hold frequency values.";
+    FreqProperty.setDescription(FreqProperty_description);
+    FreqProperty.setUnit(FreqUnit::KHz);
+    FreqProperty.setValue(15);
     static QString LayerProperty_name = tr("LayerProperty");
     LayerProperty.setName(LayerProperty_name);
     static QString LayerProperty_description = "Property to hold layer.";
     LayerProperty.setDescription(LayerProperty_description);
     LayerProperty.setValue(0);
+    static QString BrushStyleProperty_name = tr("BrushStyleProperty");
+    BrushStyleProperty.setName(BrushStyleProperty_name);
+    static QString BrushStyleProperty_description = "Property to hold QBrushStyle enum.";
+    BrushStyleProperty.setDescription(BrushStyleProperty_description);
+    BrushStyleProperty.setValue(Qt::HorPattern);
+    static QString PenWidthProperty_name = tr("PenWidthProperty");
+    PenWidthProperty.setName(PenWidthProperty_name);
+    static QString PenWidthProperty_description = "Property to hold PenWidth enum.";
+    PenWidthProperty.setDescription(PenWidthProperty_description);
+    PenWidthProperty.setValue(PenWidth::Middle);
     static QString PenStyleProperty_name = tr("PenStyleProperty");
     PenStyleProperty.setName(PenStyleProperty_name);
     static QString PenStyleProperty_description = "Property to hold pen style values.";

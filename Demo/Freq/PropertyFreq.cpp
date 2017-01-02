@@ -14,22 +14,29 @@
    limitations under the License.
 */
 
-#ifndef PROPERTY_DELEGATE_INT_LIST_H
-#define PROPERTY_DELEGATE_INT_LIST_H
+#include "PropertyFreq.h"
 
-#include "Delegates/Core/PropertyDelegateInt.h"
 
-class QtnPropertyIntBase;
-
-class QtnPropertyDelegateIntList: public QtnPropertyDelegateInt
+void QtnPropertyFreqBase::setUnit(FreqUnit unit)
 {
-    Q_DISABLE_COPY(QtnPropertyDelegateIntList)
+    if (m_unit == unit)
+        return;
 
-public:
-    QtnPropertyDelegateIntList(QtnPropertyIntBase& owner);
+    Q_EMIT propertyWillChange(this, this, QtnPropertyChangeReasonValue, &unit);
 
-protected:
-    QWidget* createValueEditorImpl(QWidget* parent, const QRect& rect, QtnInplaceInfo* inplaceInfo = nullptr) override;
-};
+    m_unit = unit;
 
-#endif // PROPERTY_DELEGATE_INT_LIST_H
+    Q_EMIT propertyDidChange(this, this, QtnPropertyChangeReasonValue);
+}
+
+bool QtnPropertyFreqBase::fromStrImpl(const QString& str)
+{
+    Q_ASSERT(false);
+    return false;
+}
+
+bool QtnPropertyFreqBase::toStrImpl(QString& str) const
+{
+    Q_ASSERT(false);
+    return false;
+}
