@@ -23,6 +23,8 @@ SOURCES_CORE += PropertyBase.cpp \
     Core/PropertyEnumFlags.cpp \
     Core/PropertyQSize.cpp \
     Core/PropertyQPoint.cpp \
+    Core/PropertyQVector3D.cpp \
+    Core/PropertyQVector4D.cpp \
     GUI/PropertyQColor.cpp \
     GUI/PropertyButton.cpp \
     GUI/PropertyQPen.cpp \
@@ -65,7 +67,7 @@ qtn_contrib {
     }
 }
 
-unity_build: SOURCES += $$PWD/QtnPropertyUnity.cpp
+qtn_unity_build: SOURCES += $$PWD/QtnPropertyUnity.cpp
 else: SOURCES += $$SOURCES_CORE $$SOURCES_WIDGET $$SOURCES_AB
 
 HEADERS += CoreAPI.h\
@@ -91,9 +93,12 @@ HEADERS += CoreAPI.h\
     Core/PropertyEnumFlags.h \
     Core/PropertyQSize.h \
     Core/PropertyQPoint.h \
+    Core/PropertyQVector3D.h \
+    Core/PropertyQVector4D.h \
     GUI/PropertyButton.h \
     GUI/PropertyQColor.h \
     GUI/PropertyQPen.h \
+    GUI/PropertyQBrush.h \
     GUI/PropertyQFont.h
 
 HEADERS += PropertyWidgetAPI.h \
@@ -123,6 +128,7 @@ HEADERS += PropertyWidgetAPI.h \
     Delegates/GUI/PropertyDelegateQColor.h \
     Delegates/GUI/PropertyDelegateButton.h \
     Delegates/GUI/PropertyDelegateQPen.h \
+    Delegates/GUI/PropertyDelegateQBrush.h \
     Utils/AccessibilityProxy.h
 
 HEADERS += \
