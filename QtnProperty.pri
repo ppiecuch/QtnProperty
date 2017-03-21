@@ -28,6 +28,7 @@ SOURCES_CORE += PropertyBase.cpp \
     GUI/PropertyQColor.cpp \
     GUI/PropertyButton.cpp \
     GUI/PropertyQPen.cpp \
+    GUI/PropertyQBrush.cpp \
     GUI/PropertyQFont.cpp
 
 SOURCES_WIDGET += PropertyWidget.cpp \
@@ -56,6 +57,7 @@ SOURCES_WIDGET += PropertyWidget.cpp \
     Delegates/GUI/PropertyDelegateQColor.cpp \
     Delegates/GUI/PropertyDelegateButton.cpp \
     Delegates/GUI/PropertyDelegateQPen.cpp \
+    Delegates/GUI/PropertyDelegateQBrush.cpp \
     Utils/AccessibilityProxy.cpp
 
 qtn_contrib {
@@ -65,10 +67,12 @@ qtn_contrib {
         message("Midi connector enabled.")
         include("Contrib/Midi/qtMidi/qtMidi.pri")
     }
+    HEADERS += $$HEAERS_CONTRIB
+    SOURCES += $$SOURCES_CONTRIB
 }
 
 qtn_unity_build: SOURCES += $$PWD/QtnPropertyUnity.cpp
-else: SOURCES += $$SOURCES_CORE $$SOURCES_WIDGET $$SOURCES_AB
+else: SOURCES += $$SOURCES_CORE $$SOURCES_WIDGET
 
 HEADERS += CoreAPI.h\
     PropertyBase.h \
@@ -130,6 +134,3 @@ HEADERS += PropertyWidgetAPI.h \
     Delegates/GUI/PropertyDelegateQPen.h \
     Delegates/GUI/PropertyDelegateQBrush.h \
     Utils/AccessibilityProxy.h
-
-HEADERS += \
-    $$HEAERS_CONTRIB

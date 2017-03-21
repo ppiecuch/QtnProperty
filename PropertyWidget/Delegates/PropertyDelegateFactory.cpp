@@ -144,11 +144,11 @@ bool initQtnPropertyWidgetLibrary(QIcon *resetIcon)
 {
     static bool initialized = false;
 
-    if (initialized)
-        return false;
-
     if (resetIcon)
         qtnResetIcon = *resetIcon;
+
+    if (initialized)
+        return false;
 
     regPropertySetDelegates();
     regBoolDelegates();
@@ -173,4 +173,4 @@ bool initQtnPropertyWidgetLibrary(QIcon *resetIcon)
     return true;
 }
 
-bool initializeQtnPropertyWidgetLibrary = initQtnPropertyWidgetLibrary();
+static bool initializeQtnPropertyWidgetLibrary = initQtnPropertyWidgetLibrary();
