@@ -108,7 +108,7 @@ QtnPropertyWidget::QtnPropertyWidget(QtnPropertyView *propertyView, QWidget* par
     Q_ASSERT(propertyView);
     propertyView->setParent(this);
 
-    set_smaller_text_osx(this);
+    qtn_set_smaller_text_osx(this);
 
     m_layout->addWidget(m_propertyView);
 
