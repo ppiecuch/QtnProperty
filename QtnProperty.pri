@@ -61,14 +61,10 @@ SOURCES_WIDGET += PropertyWidget.cpp \
     Utils/AccessibilityProxy.cpp
 
 qtn_contrib {
-	SOURCES_CONTRIB = $$PWD/Demo/AB/PropertyABColor.cpp $$PWD/Demo/AB/PropertyDelegateABColor.cpp
-	HEADERS_CONTRIB = $$PWD/Demo/AB/PropertyABColor.h $$PWD/Demo/AB/PropertyDelegateABColor.h
     exists("$$PWD/Contrib/Midi") {
-        message("Midi connector enabled.")
-        include("Contrib/Midi/qtMidi/qtMidi.pri")
+        message("*** Midi connector enabled.")
+        include("$$PWD/Contrib/Midi/qtMidi/qtMidi.pri")
     }
-    HEADERS += $$HEAERS_CONTRIB
-    SOURCES += $$SOURCES_CONTRIB
 }
 
 qtn_unity_build: SOURCES += $$PWD/QtnPropertyUnity.cpp
