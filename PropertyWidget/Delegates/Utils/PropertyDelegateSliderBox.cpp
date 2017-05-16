@@ -26,6 +26,7 @@ QtnPropertyDelegateSlideBox::QtnPropertyDelegateSlideBox()
       m_drawBorder(true),
       m_updateByScroll(true),
       m_animate(false),
+      m_itemToolTip(QObject::tr("Drag/Scroll mouse to change value")),
       m_dragValuePart(0),
       m_oldValuePart(0),
       m_animateWidget(nullptr)
@@ -44,12 +45,13 @@ void QtnPropertyDelegateSlideBox::applyAttributesImpl(const QtnPropertyDelegateA
     qtnGetAttribute(attributes, "drawBorder", m_drawBorder);
     qtnGetAttribute(attributes, "updateByScroll", m_updateByScroll);
     qtnGetAttribute(attributes, "animate", m_animate);
+    qtnGetAttribute(attributes, "toolTip", m_itemToolTip);
 }
 
 bool QtnPropertyDelegateSlideBox::createSubItemValueImpl(QtnDrawContext& context, QtnSubItem& subItemValue)
 {
     subItemValue.trackState();
-    subItemValue.setTextAsTooltip("Drag/Scroll mouse to change value");
+    subItemValue.setTextAsTooltip(m_itemToolTip);
     subItemValue.drawHandler = qtnMemFn(this, &QtnPropertyDelegateSlideBox::draw);
     subItemValue.eventHandler = qtnMemFn(this, &QtnPropertyDelegateSlideBox::event);
 

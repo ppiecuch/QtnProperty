@@ -21,7 +21,7 @@
 
 class QtnPropertyIntBase;
 
-class QTN_PW_EXPORT QtnPropertyDelegateIntList: public QtnPropertyDelegateInt
+class QtnPropertyDelegateIntList: public QtnPropertyDelegateInt
 {
     Q_DISABLE_COPY(QtnPropertyDelegateIntList)
 

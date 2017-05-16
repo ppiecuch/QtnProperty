@@ -5,6 +5,8 @@
 #include "../Core/PropertyGUI.h"
 #include "AB/PropertyABColor.h"
 #include "Layer/PropertyLayer.h"
+#include "PenWidth/PropertyPenWidth.h"
+#include "Freq/PropertyFreq.h"
 
 class COLOR
 {
@@ -85,7 +87,10 @@ public:
     
     // start children declarations
     QtnPropertyBool& BoolProperty;
+    QtnPropertyFreq& FreqProperty;
     QtnPropertyLayer& LayerProperty;
+    QtnPropertyQBrushStyle& BrushStyleProperty;
+    QtnPropertyPenWidth& PenWidthProperty;
     QtnPropertyQPenStyle& PenStyleProperty;
     QtnPropertyQPen& PenProperty;
     QtnPropertyButton& ButtonProperty;
@@ -108,7 +113,6 @@ public:
     QtnPropertyQRect& QRectProperty;
     QtnPropertyQColor& QColorProperty;
     QtnPropertyQFont& QFontProperty;
-    QtnPropertyBool& BoolButtonProperty;
     QtnPropertySetSubPropertySetType& SubPropertySet2;
     // end children declarations
 
@@ -128,7 +132,6 @@ private:
     // start slot declarations
     void on_EnableSubPropertySet_propertyDidChange(const QtnPropertyBase* changedProperty, const QtnPropertyBase* firedProperty, QtnPropertyChangeReason reason);
     void on_QColorProperty_propertyDidChange(const QtnPropertyBase* changedProperty, const QtnPropertyBase* firedProperty, QtnPropertyChangeReason reason);
-    void on_BoolButtonProperty_propertyDidChange(const QtnPropertyBase* changedProperty, const QtnPropertyBase* firedProperty, QtnPropertyChangeReason reason);
     // end slot declarations
 };
 

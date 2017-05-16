@@ -724,7 +724,7 @@ void QtnPropertyView::invalidateVisibleItems()
     deactivateSubItems();
     m_visibleItemsValid = false;
     m_visibleItems.clear();
-    update();
+    viewport()->update();
 }
 
 void QtnPropertyView::validateVisibleItems() const

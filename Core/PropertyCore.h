@@ -13,5 +13,7 @@
 #include "Core/PropertyQRect.h"
 #include "Core/PropertyQPoint.h"
 #include "Core/PropertyQSize.h"
+#include "Core/PropertyQVector3D.h"
+#include "Core/PropertyQVector4D.h"
 
 #endif // PROPERTYCORE_H

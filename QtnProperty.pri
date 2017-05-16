@@ -23,9 +23,12 @@ SOURCES_CORE += PropertyBase.cpp \
     Core/PropertyEnumFlags.cpp \
     Core/PropertyQSize.cpp \
     Core/PropertyQPoint.cpp \
+    Core/PropertyQVector3D.cpp \
+    Core/PropertyQVector4D.cpp \
     GUI/PropertyQColor.cpp \
     GUI/PropertyButton.cpp \
     GUI/PropertyQPen.cpp \
+    GUI/PropertyQBrush.cpp \
     GUI/PropertyQFont.cpp
 
 SOURCES_WIDGET += PropertyWidget.cpp \
@@ -54,19 +57,18 @@ SOURCES_WIDGET += PropertyWidget.cpp \
     Delegates/GUI/PropertyDelegateQColor.cpp \
     Delegates/GUI/PropertyDelegateButton.cpp \
     Delegates/GUI/PropertyDelegateQPen.cpp \
+    Delegates/GUI/PropertyDelegateQBrush.cpp \
     Utils/AccessibilityProxy.cpp
 
 qtn_contrib {
-	SOURCES_CONTRIB = Contrib/AB/PropertyABColor.cpp Contrib/AB/PropertyDelegateABColor.cpp
-	HEADERS_CONTRIB = Contrib/AB/PropertyABColor.h Contrib/AB/PropertyDelegateABColor.h
     exists("$$PWD/Contrib/Midi") {
-        message("Midi connector enabled.")
-        include("Contrib/Midi/qtMidi/qtMidi.pri")
+        message("*** Midi connector enabled.")
+        include("$$PWD/Contrib/Midi/qtMidi/qtMidi.pri")
     }
 }
 
-unity_build: SOURCES += $$PWD/QtnPropertyUnity.cpp
-else: SOURCES += $$SOURCES_CORE $$SOURCES_WIDGET $$SOURCES_AB
+qtn_unity_build: SOURCES += $$PWD/QtnPropertyUnity.cpp
+else: SOURCES += $$SOURCES_CORE $$SOURCES_WIDGET
 
 HEADERS += CoreAPI.h\
     PropertyBase.h \
@@ -91,9 +93,12 @@ HEADERS += CoreAPI.h\
     Core/PropertyEnumFlags.h \
     Core/PropertyQSize.h \
     Core/PropertyQPoint.h \
+    Core/PropertyQVector3D.h \
+    Core/PropertyQVector4D.h \
     GUI/PropertyButton.h \
     GUI/PropertyQColor.h \
     GUI/PropertyQPen.h \
+    GUI/PropertyQBrush.h \
     GUI/PropertyQFont.h
 
 HEADERS += PropertyWidgetAPI.h \
@@ -123,7 +128,5 @@ HEADERS += PropertyWidgetAPI.h \
     Delegates/GUI/PropertyDelegateQColor.h \
     Delegates/GUI/PropertyDelegateButton.h \
     Delegates/GUI/PropertyDelegateQPen.h \
+    Delegates/GUI/PropertyDelegateQBrush.h \
     Utils/AccessibilityProxy.h
-
-HEADERS += \
-    $$HEAERS_CONTRIB

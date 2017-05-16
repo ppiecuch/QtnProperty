@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="/app">
+    <file>content/ledoff1.png</file>
+    <file>content/ledon1.png</file>
+    <file>content/midi_controller.png</file>
+    <file>content/midi_icon.png</file>
+  </qresource>
+</RCC>
