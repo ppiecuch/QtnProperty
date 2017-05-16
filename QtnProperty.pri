@@ -66,7 +66,7 @@ qtn_contrib {
 }
 
 unity_build: SOURCES += $$PWD/QtnPropertyUnity.cpp
-else: SOURCES += SOURCES_CORE $$SOURCES_WIDGET $$SOURCES_AB
+else: SOURCES += $$SOURCES_CORE $$SOURCES_WIDGET $$SOURCES_AB
 
 HEADERS += CoreAPI.h\
     PropertyBase.h \
