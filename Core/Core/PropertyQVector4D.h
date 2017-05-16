@@ -40,6 +40,8 @@ P_PROPERTY_DECL_EQ_OPERATORS(QtnPropertyQVector4DBase, QVector4D)
 
 QTN_PE_CORE_EXPORT QtnProperty* qtnCreateXProperty(QObject *parent, QtnPropertyQVector4DBase *propertyPoint);
 QTN_PE_CORE_EXPORT QtnProperty* qtnCreateYProperty(QObject *parent, QtnPropertyQVector4DBase *propertyPoint);
+QTN_PE_CORE_EXPORT QtnProperty* qtnCreateZProperty(QObject *parent, QtnPropertyQVector4DBase *propertyPoint);
+QTN_PE_CORE_EXPORT QtnProperty* qtnCreateWProperty(QObject *parent, QtnPropertyQVector4DBase *propertyPoint);
 
 class QTN_PE_CORE_EXPORT QtnPropertyQVector4DCallback: public QtnSinglePropertyCallback<QtnPropertyQVector4DBase>
 {

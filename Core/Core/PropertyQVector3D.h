@@ -40,6 +40,7 @@ P_PROPERTY_DECL_EQ_OPERATORS(QtnPropertyQVector3DBase, QVector3D)
 
 QTN_PE_CORE_EXPORT QtnProperty* qtnCreateXProperty(QObject *parent, QtnPropertyQVector3DBase *propertyPoint);
 QTN_PE_CORE_EXPORT QtnProperty* qtnCreateYProperty(QObject *parent, QtnPropertyQVector3DBase *propertyPoint);
+QTN_PE_CORE_EXPORT QtnProperty* qtnCreateZProperty(QObject *parent, QtnPropertyQVector3DBase *propertyPoint);
 
 class QTN_PE_CORE_EXPORT QtnPropertyQVector3DCallback: public QtnSinglePropertyCallback<QtnPropertyQVector3DBase>
 {
