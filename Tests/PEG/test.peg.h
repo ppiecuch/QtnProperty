@@ -302,6 +302,12 @@ public:
     QtnPropertyQFont& fnp;
     QtnPropertyQFontCallback& fnpc;
     QtnPropertyButton& bttn;
+    QtnPropertyQPointF& ppf;
+    QtnPropertyQPointFCallback& ppfc;
+    QtnPropertyQRectF& rpf;
+    QtnPropertyQRectFCallback& rpfc;
+    QtnPropertyQSizeF& szpf;
+    QtnPropertyQSizeFCallback& szpfc;
     // end children declarations
 
 protected:
@@ -325,8 +331,11 @@ private:
         double _d;
         QString _s;
         QRect _r;
+        QRectF _rf;
         QPoint _p;
+        QPointF _pf;
         QSize _sz;
+        QSizeF _szf;
         QtnEnumValueType _e;
         QtnEnumFlagsValueType _ef;
         QColor _cl;

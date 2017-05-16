@@ -64,8 +64,11 @@ bool qtnRegisterDefaultMetaPropertyFactory()
     qtnRegisterMetaPropertyFactory(QVariant::Int, qtnCreateFactory<QtnPropertyIntCallback>());
     qtnRegisterMetaPropertyFactory(QVariant::UInt, qtnCreateFactory<QtnPropertyUIntCallback>());
     qtnRegisterMetaPropertyFactory(QVariant::Point, qtnCreateFactory<QtnPropertyQPointCallback>());
+    qtnRegisterMetaPropertyFactory(QVariant::PointF, qtnCreateFactory<QtnPropertyQPointFCallback>());
     qtnRegisterMetaPropertyFactory(QVariant::Rect, qtnCreateFactory<QtnPropertyQRectCallback>());
+    qtnRegisterMetaPropertyFactory(QVariant::RectF, qtnCreateFactory<QtnPropertyQRectFCallback>());
     qtnRegisterMetaPropertyFactory(QVariant::Size, qtnCreateFactory<QtnPropertyQSizeCallback>());
+    qtnRegisterMetaPropertyFactory(QVariant::SizeF, qtnCreateFactory<QtnPropertyQSizeFCallback>());
     qtnRegisterMetaPropertyFactory(QVariant::Color, qtnCreateFactory<QtnPropertyQColorCallback>());
     qtnRegisterMetaPropertyFactory(QVariant::Font, qtnCreateFactory<QtnPropertyQFontCallback>());
     qtnRegisterMetaPropertyFactory(QVariant::Pen, qtnCreateFactory<QtnPropertyQPenCallback>());

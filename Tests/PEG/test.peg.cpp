@@ -692,6 +692,12 @@ QtnPropertySetAllPropertyTypes::QtnPropertySetAllPropertyTypes(QObject* parent)
     , fnp(*new QtnPropertyQFont(this))
     , fnpc(*new QtnPropertyQFontCallback(this))
     , bttn(*new QtnPropertyButton(this))
+    , ppf(*new QtnPropertyQPointF(this))
+    , ppfc(*new QtnPropertyQPointFCallback(this))
+    , rpf(*new QtnPropertyQRectF(this))
+    , rpfc(*new QtnPropertyQRectFCallback(this))
+    , szpf(*new QtnPropertyQSizeF(this))
+    , szpfc(*new QtnPropertyQSizeFCallback(this))
     , _b(true)
 {
     
@@ -701,8 +707,11 @@ QtnPropertySetAllPropertyTypes::QtnPropertySetAllPropertyTypes(QObject* parent)
         _d = 32.4;
         _s = "name";
         _r = QRect(10, 10, 10, 10);
+        _rf = QRectF(10.1, 10.2, 10.3, 10.4);
         _p = QPoint(9, 2);
+        _pf = QPointF(9.9, 2.2);
         _sz = QSize(33, 21);
+        _szf = QSizeF(33.0, 21.9);
         _e = COLOR::RED;
         _ef = MASK::ONE|MASK::FOUR;
         _cl = QColor(Qt::red);
@@ -752,6 +761,12 @@ QtnPropertySetAllPropertyTypes& QtnPropertySetAllPropertyTypes::operator=(const 
     fnp = other.fnp;
     fnpc = other.fnpc;
     bttn = other.bttn;
+    ppf = other.ppf;
+    ppfc = other.ppfc;
+    rpf = other.rpf;
+    rpfc = other.rpfc;
+    szpf = other.szpf;
+    szpfc = other.szpfc;
 
     return *this;
 }
@@ -911,6 +926,36 @@ bool QtnPropertySetAllPropertyTypes::copyValuesImpl(QtnPropertySet* propertySetC
         bttn = theCopyFrom->bttn;
     }
 
+    if (!(theCopyFrom->ppf.state() & ignoreMask))
+    {
+        ppf = theCopyFrom->ppf;
+    }
+
+    if (!(theCopyFrom->ppfc.state() & ignoreMask))
+    {
+        ppfc = theCopyFrom->ppfc;
+    }
+
+    if (!(theCopyFrom->rpf.state() & ignoreMask))
+    {
+        rpf = theCopyFrom->rpf;
+    }
+
+    if (!(theCopyFrom->rpfc.state() & ignoreMask))
+    {
+        rpfc = theCopyFrom->rpfc;
+    }
+
+    if (!(theCopyFrom->szpf.state() & ignoreMask))
+    {
+        szpf = theCopyFrom->szpf;
+    }
+
+    if (!(theCopyFrom->szpfc.state() & ignoreMask))
+    {
+        szpfc = theCopyFrom->szpfc;
+    }
+
     return true;
 }
 
@@ -1036,6 +1081,30 @@ void QtnPropertySetAllPropertyTypes::init()
     static QString bttn_name = tr("bttn");
     bttn.setName(bttn_name);
     bttn.setId(40);
+    static QString ppf_name = tr("ppf");
+    ppf.setName(ppf_name);
+    ppf.setId(41);
+    static QString ppfc_name = tr("ppfc");
+    ppfc.setName(ppfc_name);
+    ppfc.setCallbackValueGet([this]() { return _pf; });
+    ppfc.setCallbackValueSet([this](QPointF v) { _pf = v; });
+    ppfc.setId(42);
+    static QString rpf_name = tr("rpf");
+    rpf.setName(rpf_name);
+    rpf.setId(43);
+    static QString rpfc_name = tr("rpfc");
+    rpfc.setName(rpfc_name);
+    rpfc.setCallbackValueGet([this]() { return _rf; });
+    rpfc.setCallbackValueSet([this](QRectF v) { _rf = v; });
+    rpfc.setId(44);
+    static QString szpf_name = tr("szpf");
+    szpf.setName(szpf_name);
+    szpf.setId(45);
+    static QString szpfc_name = tr("szpfc");
+    szpfc.setName(szpfc_name);
+    szpfc.setCallbackValueGet([this]() { return _szf; });
+    szpfc.setCallbackValueSet([this](QSizeF v) { _szf = v; });
+    szpfc.setId(46);
     // end children initialization
 }
 
