@@ -24,6 +24,7 @@
 #include <QStylePainter>
 #include <QEvent>
 
+class QtnPropertyBase;
 class QtnPropertyView;
 struct QtnDrawContext;
 struct QtnEventContext;

@@ -15,6 +15,7 @@
 */
 
 #include "PropertyDelegateQPen.h"
+#include "../../../Core/Core/PropertyEnum.h"
 #include "../../../Core/GUI/PropertyQPen.h"
 #include "../PropertyDelegateFactory.h"
 #include "../Utils/PropertyEditorHandler.h"
