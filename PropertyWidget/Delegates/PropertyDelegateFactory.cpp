@@ -129,6 +129,8 @@ void regQRectDelegates(QtnPropertyDelegateFactory& factory);
 void regQRectFDelegates(QtnPropertyDelegateFactory& factory);
 void regQSizeDelegates(QtnPropertyDelegateFactory& factory);
 void regQSizeFDelegates(QtnPropertyDelegateFactory& factory);
+void regQVector3DDelegates(QtnPropertyDelegateFactory& factory);
+void regQVector4DDelegates(QtnPropertyDelegateFactory& factory);
 void regQStringDelegates(QtnPropertyDelegateFactory& factory);
 void regUIntDelegates(QtnPropertyDelegateFactory& factory);
 void regQColorDelegates(QtnPropertyDelegateFactory& factory);
@@ -155,6 +157,8 @@ public:
         regQRectFDelegates(*this);
         regQSizeDelegates(*this);
         regQSizeFDelegates(*this);
+        regQVector3DDelegates(*this);
+        regQVector4DDelegates(*this);
         regQStringDelegates(*this);
         regUIntDelegates(*this);
         regQColorDelegates(*this);

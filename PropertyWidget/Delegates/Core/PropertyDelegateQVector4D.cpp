@@ -18,10 +18,9 @@
 #include "../../../Core/Core/PropertyQVector4D.h"
 #include "../PropertyDelegateFactory.h"
 
-void regQVector4DDelegates()
+void regQVector4DDelegates(QtnPropertyDelegateFactory &factory)
 {
-  QtnPropertyDelegateFactory::staticInstance()
-    .registerDelegateDefault(&QtnPropertyQVector4DBase::staticMetaObject
+    factory.registerDelegateDefault(&QtnPropertyQVector4DBase::staticMetaObject
 			     , &qtnCreateDelegate<QtnPropertyDelegateQVector4D, QtnPropertyQVector4DBase>
 			     , "XYZW");
 }

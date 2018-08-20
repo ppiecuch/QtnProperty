@@ -18,10 +18,9 @@
 #include "../../../Core/Core/PropertyQVector3D.h"
 #include "../PropertyDelegateFactory.h"
 
-void regQVector3DDelegates()
+void regQVector3DDelegates(QtnPropertyDelegateFactory &factory)
 {
-  QtnPropertyDelegateFactory::staticInstance()
-    .registerDelegateDefault(&QtnPropertyQVector3DBase::staticMetaObject
+    factory.registerDelegateDefault(&QtnPropertyQVector3DBase::staticMetaObject
 			     , &qtnCreateDelegate<QtnPropertyDelegateQVector3D, QtnPropertyQVector3DBase>
 			     , "XYZ");
 }
