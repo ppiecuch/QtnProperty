@@ -28,15 +28,13 @@
 #include <QLineEdit>
 #include <QApplication>
 
-void regBoolDelegates()
+void regBoolDelegates(QtnPropertyDelegateFactory& factory)
 {
-  QtnPropertyDelegateFactory::staticInstance()
-    .registerDelegateDefault(&QtnPropertyBoolBase::staticMetaObject
+    factory.registerDelegateDefault(&QtnPropertyBoolBase::staticMetaObject
                  , &qtnCreateDelegate<QtnPropertyDelegateBoolCheck, QtnPropertyBoolBase>
                  , "CheckBox");
 
-  QtnPropertyDelegateFactory::staticInstance()
-    .registerDelegate(&QtnPropertyBoolBase::staticMetaObject
+    factory.registerDelegate(&QtnPropertyBoolBase::staticMetaObject
               , &qtnCreateDelegate<QtnPropertyDelegateBoolCombobox, QtnPropertyBoolBase>
               , "ComboBox");
 

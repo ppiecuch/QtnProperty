@@ -29,10 +29,9 @@
 
 #include <GUI/PropertyQColor.h>
 
-void regQPenStyleDelegates()
+void regQPenStyleDelegates(QtnPropertyDelegateFactory &factory)
 {
-  QtnPropertyDelegateFactory::staticInstance()
-    .registerDelegateDefault(&QtnPropertyQPenStyleBase::staticMetaObject
+    factory.registerDelegateDefault(&QtnPropertyQPenStyleBase::staticMetaObject
                  , &qtnCreateDelegate<QtnPropertyDelegateQPenStyle, QtnPropertyQPenStyleBase>
                  , "ComboBox");
 }
@@ -160,10 +159,9 @@ bool QtnPropertyDelegateQPenStyle::propertyValueToStrImpl(QString& strValue) con
     return owner().toStr(strValue);
 }
 
-void regQPenDelegates()
+void regQPenDelegates(QtnPropertyDelegateFactory &factory)
 {
-  QtnPropertyDelegateFactory::staticInstance()
-    .registerDelegateDefault(&QtnPropertyQPenBase::staticMetaObject
+    factory.registerDelegateDefault(&QtnPropertyQPenBase::staticMetaObject
                  , &qtnCreateDelegate<QtnPropertyDelegateQPen, QtnPropertyQPenBase>
                  , "LineEditBttn");
 }
